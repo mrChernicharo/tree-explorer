@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg" href="/src/typescript.svg" />
     <title>Hello D3</title>
     <style>
       * {
@@ -16,10 +17,6 @@
         background-color: #ccc;
         min-height: 100%;
       }
-      /* #canvas {
-				width: 100%;
-				background-color: #aaa;
-			} */
     </style>
   </head>
   <body>
@@ -27,6 +24,9 @@
     <div id="frame">
       <div id="canvas"></div>
     </div>
+
+    <button id="toggle-btn">toggle data</button>
+    <button id="add-btn">add data point</button>
   </body>
   <script src="src/main.ts" type="module"></script>
 </html>

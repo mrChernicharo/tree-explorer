@@ -1,13 +1,13 @@
 import * as d3 from "d3";
 
-const tableRoot = { id: "root", name: "root" };
+export const tableRoot = { id: "root", name: "root" };
 
-const orgs = [
+export const orgs = [
   { id: "org-1", name: "Genesys" },
   { id: "org-2", name: "Acuvity" },
 ];
 
-const users = [
+export const users = [
   { id: "user-1", name: "John", orgId: "org-1" },
   { id: "user-2", name: "Sarah", orgId: "org-1" },
   { id: "user-3", name: "Jude", orgId: "org-1" },
@@ -15,20 +15,20 @@ const users = [
   { id: "user-5", name: "Aaron", orgId: "org-2" },
 ];
 
-const companies = [
+export const companies = [
   { id: "company-1", name: "Open AI" },
   { id: "company-2", name: "Google" },
   { id: "company-3", name: "Meta" },
 ];
 
-const services = [
+export const services = [
   { id: "service-1", name: "ChatGPT", companyId: "company-1" },
   { id: "service-2", name: "Dall-E", companyId: "company-1" },
   { id: "service-3", name: "Gemini", companyId: "company-2" },
   { id: "service-4", name: "Llama", companyId: "company-3" },
 ];
 
-const interactions = [
+export const interactions = [
   { id: "interaction-1", name: "2024-11-21", userId: "user-1", serviceId: "service-1" },
   { id: "interaction-2", name: "2024-11-20", userId: "user-1", serviceId: "service-2" },
   { id: "interaction-3", name: "2024-11-19", userId: "user-1", serviceId: "service-3" },
@@ -56,5 +56,18 @@ const data = d3
     if (d.id == "root") return null;
     else return "root";
   })(table);
+
+export function stratifyTableData<T>(table: T[]) {
+  return d3
+    .stratify()
+    .id((d: any) => d.id)
+    .parentId((d: any) => {
+      if (d.orgId) return d.orgId;
+      if (d.companyId) return d.companyId;
+      if (d.userId) return d.userId;
+      if (d.id == "root") return null;
+      else return "root";
+    })(table);
+}
 
 console.log({ data });

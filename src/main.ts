@@ -1,23 +1,55 @@
-import { drawTree } from "./tree";
+import { data } from "./data";
+import { buildTree2, TreeChart } from "./tree";
 
 const canvas = document.querySelector("#frame") as HTMLDivElement;
-const svg = drawTree();
+// const toggleBtn = document.querySelector("#toggle-btn") as HTMLButtonElement;
+const addBtn = document.querySelector("#add-btn") as HTMLButtonElement;
+
+// const dataByUser = [tableRoot, ...orgs, ...users, ...companies, ...services, ...interactions];
+// const dataByService = [tableRoot, ...companies, ...services, ...interactions, ...users, ...orgs];
+// const state = {
+//   dataView: "user",
+//   data: dataByUser,
+// };
+
+// toggleBtn.onclick = () => {
+//   canvas.innerHTML = "";
+//   state.dataView = state.dataView === "user" ? "service" : "user";
+//   state.data = state.dataView === "user" ? dataByUser : dataByService;
+
+//   // const svg = buildTree(sdata);
+//   const svg = buildTree(d3.hierarchy(data), 1);
+//   console.log({ data, sdata, svg });
+//   canvas.appendChild(svg);
+// };
+
+// console.log(state, stratifyTableData(state.data));
+// const sdata = stratifyTableData(state.data);
+
+/******/
+
+const treeChart = new TreeChart<any>();
+
+const { svg, treeState } = treeChart.buildTree(data);
+
+// let { svg, update, source, nodes, nodeEnter, node } = buildTree2(data, 0);
 canvas.appendChild(svg);
 
-// const data2 = [
-//   { name: "A", value: 123, country: "Brazil", parent: null },
-//   { name: "B", value: 45, country: "Brazil", parent: "A" },
-//   { name: "C", value: 13, country: "Brazil", parent: "A" },
-//   { name: "D", value: 273, country: "Brazil", parent: "A" },
-//   { name: "E", value: 78, country: "US", parent: "A" },
-//   { name: "F", value: 123, country: "US", parent: "E" },
-//   { name: "G", value: 45, country: "Japan", parent: "C" },
-//   { name: "H", value: 13, country: "Japan", parent: "C" },
-//   { name: "I", value: 273, country: "Ireland", parent: "C" },
-//   { name: "J", value: 78, country: "Slovenia", parent: "C" },
-// ];
+let i = 0;
+addBtn.onclick = () => {
+  // const nodes = [];
+  // //   console.log({ source, nodes, nodeEnter, node });
+  // let j = 0;
+  // while (j < 3) {
+  //   const newd = { data: { name: "JUST ADDED " + i } };
+  //   nodes.push(newd);
+  //   i++;
+  //   j++;
+  // }
 
-// const root = d3
-//   .stratify()
-//   .id((d) => d.name)
-//   .parentId((d) => d.parent)(data2);
+  // treeChart.addNodes(nodes);
+
+  const newd = { data: { name: "JUST ADDED " + i } };
+  treeChart.addNode(newd);
+  i++;
+};
