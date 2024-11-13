@@ -1,5 +1,5 @@
 import { data } from "./data";
-import { buildTree2, TreeChart } from "./tree";
+import { TreeChart } from "./tree";
 
 const canvas = document.querySelector("#frame") as HTMLDivElement;
 // const toggleBtn = document.querySelector("#toggle-btn") as HTMLButtonElement;
@@ -37,19 +37,20 @@ canvas.appendChild(svg);
 
 let i = 0;
 addBtn.onclick = () => {
-  // const nodes = [];
-  // //   console.log({ source, nodes, nodeEnter, node });
-  // let j = 0;
-  // while (j < 3) {
-  //   const newd = { data: { name: "JUST ADDED " + i } };
-  //   nodes.push(newd);
-  //   i++;
-  //   j++;
-  // }
+  const nodes = [];
+  //   console.log({ source, nodes, nodeEnter, node });
+  let j = 0;
+  while (j < 3) {
+    const newd = { data: { name: "JUST ADDED " + i } };
+    nodes.push(newd);
+    // treeChart.addNode(newd);
+    i++;
+    j++;
+  }
 
-  // treeChart.addNodes(nodes);
+  treeChart.addNodes(nodes);
 
-  const newd = { data: { name: "JUST ADDED " + i } };
-  treeChart.addNode(newd);
-  i++;
+  // const newd = { data: { name: "JUST ADDED " + i } };
+  // treeChart.addNode(newd);
+  // i++;
 };
