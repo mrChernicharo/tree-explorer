@@ -202,30 +202,59 @@ class TreeChart<T> {
 
   async onNodeClick(event: PointerEvent | null, d: any) {
     const sameElement = d.id === this.selected?.id;
+    console.log("onNodeClick:::", d.data.children, d.children, sameElement);
 
-    if (d.children) {
-      d._children = d.children;
-      d.children = null;
-    } else {
-      d.children = d._children;
-      d._children = null;
+    if (!sameElement) {
+      this.selected = d;
+
+      if ([undefined, 0].includes(d.data?.children?.length)) {
+        console.log("first click!");
+        this.addNodes((await api.fetchNodes(d)) as any[]);
+      } else {
+        if (d.data?.children?.length > 0) {
+          if (d.children) {
+            console.log("select open node!");
+          } else {
+            console.log("open closed node!");
+            d.children = d._children;
+            d._children = null;
+          }
+        } else {
+          console.log("just open!");
+          d.children = d._children;
+          d._children = null;
+        }
+      }
     }
 
-    this.selected = d;
-    const entries = await api.fetchNodes(d);
-    this.addNodes(entries as any[]);
-    console.log("onNodeClick:::", { d, sameElement });
+    if (d.children && sameElement) {
+      console.log("close!");
+      d._children = d.children;
+      d.children = null;
+      this.selected = null;
+    }
+
+    // if (d.children) {
+    //   d._children = d.children;
+    //   d.children = null;
+    // } else {
+    //   d.children = d._children;
+    //   d._children = null;
+    // }
+    // entries = await api.fetchNodes(d);
+    // this.addNodes(entries as any[]);
     // console.log("onNodeClick:::", { d, entries, sameElement });
+
+    if (sameElement) {
+    }
 
     return this.update(event, d);
   }
 
   addNode(d: any) {
     if (!this.selected) throw Error("a node needs to be selected before you can go around adding nodes");
-    // console.log("addNode:::", { d });
-
     const newNode = d3.hierarchy(d.data) as any;
-    console.log("addNode:::", { newNode, d });
+    // console.log("addNode:::", { newNode, d });
 
     newNode.depth = this.selected.depth + 1;
     newNode.height = this.selected.height - 1;
