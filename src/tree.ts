@@ -120,8 +120,8 @@ class TreeChart<T> {
     const node = this.gNode.selectAll("g").data(nodes, (d: any) => d.id);
 
     const leaves: any[] = [];
-    this.selected?.eachAfter((n: any) => {
-      if (n.depth > this.selected.depth) leaves.push(n);
+    source.eachAfter((n: any) => {
+      if (n.depth > source.depth) leaves.push(n);
     });
     const btnAppendingNode = leaves.pop();
 
@@ -148,7 +148,6 @@ class TreeChart<T> {
       .attr("dy", "0.32em")
       .attr("text-anchor", (d: any) => "center")
       .text((d: any) => d.data.name)
-      // .text((d: any, i: number) => (i > leaves.length ? d.data.name : `${d.data.name} ${d.data.count}`))
       .attr("stroke-linejoin", "round")
       .attr("stroke-width", 3)
       .attr("stroke", "white")
@@ -174,9 +173,8 @@ class TreeChart<T> {
 
     console.log("update :: ", { isLoading: this.isLoading, root: this.root, source, selected: this.selected });
 
-    // Transition nodes to their new position.
     const nodeUpdate = node.merge(nodeEnter).transition(transition);
-
+    // Transition nodes to their new position.
     nodeUpdate
       .attr("transform", (d: any) => `translate(${d.y},${d.x})`)
       .attr("fill-opacity", 1)
@@ -202,8 +200,6 @@ class TreeChart<T> {
       .attr("transform", (d: any) => `translate(${source.y},${source.x})`)
       .attr("fill-opacity", 0)
       .attr("stroke-opacity", 0);
-    // .select(".loading")
-    // .style("opacity", 0);
 
     // Update the links…
     const link = this.gLink.selectAll("path").data(links, (d: any) => d.target.id);
@@ -218,10 +214,10 @@ class TreeChart<T> {
       }) as any;
 
     // Transition links to their new position.
-    link.merge(linkEnter).transition(transition).attr("d", this.diagonal);
+    const linkUpdate = link.merge(linkEnter).transition(transition).attr("d", this.diagonal);
 
     // Transition exiting nodes to the parent's new position.
-    link
+    const linkExit = link
       .exit()
       .transition(transition)
       .remove()
@@ -262,16 +258,12 @@ class TreeChart<T> {
 
     if (clickedPlus) {
       this.isLoading = true;
-
       this.update(null, d.parent);
       const newNodes = (await api.fetchNodes(d.parent)) as any[];
       console.log("clicked plus-icon", { d, newNodes });
       this.addNodes(newNodes);
       this.isLoading = false;
-      this.update(null, d.parent);
-      // this.selected = d;
-
-      return;
+      return this.update(null, d.parent);
     }
 
     if (clickedNode) {
@@ -308,11 +300,6 @@ class TreeChart<T> {
         }
       }
     }
-
-    // else {
-    //   console.log("clicked something else");
-    //   return;
-    // }
 
     return this.update(event, d);
   }
