@@ -122,13 +122,7 @@ class TreeChart<T> {
       .attr("transform", (d: any) => `translate(${source.y0},${source.x0})`)
       .attr("fill-opacity", 0)
       .attr("stroke-opacity", 0)
-      .on("click", this.nodeClick.bind(this));
-
-    nodeEnter
-      .append("circle")
-      .attr("r", 2.5)
-      .attr("fill", (d: any) => (d._children ? "#555" : "#999"))
-      .attr("stroke-width", 10);
+      .on("click", this.onNodeClick.bind(this));
 
     nodeEnter
       .append("rect")
@@ -136,12 +130,11 @@ class TreeChart<T> {
       .attr("y", -8)
       .attr("width", (d: any) => d.data.name.length * 6 + 10)
       .attr("height", 16)
-      .attr("stroke-width", 3);
+      .attr("stroke-width", 2);
 
     nodeEnter
       .append("text")
       .attr("dy", "0.32em")
-      // .attr('x', d => (d._children ? -6 : 6))
       .attr("text-anchor", (d: any) => "center")
       .text((d: any) => d.data.name)
       .attr("stroke-linejoin", "round")
@@ -155,7 +148,10 @@ class TreeChart<T> {
       .transition(transition)
       .attr("transform", (d: any) => `translate(${d.y},${d.x})`)
       .attr("fill-opacity", 1)
-      .attr("stroke-opacity", 1);
+      .attr("stroke-opacity", 1)
+      .attr("stroke", (d: any) => {
+        return d.id === this.selected?.id ? "red" : "";
+      });
 
     // Transition exiting nodes to the parent's new position.
     const nodeExit = node
@@ -197,11 +193,15 @@ class TreeChart<T> {
       d.y0 = d.y;
     });
 
-    return { svg: this.svg.node() as SVGSVGElement, treeState: this };
+    return { svg: this.svg.node() as SVGSVGElement };
+    // return { svg: this.svg.node() as SVGSVGElement, treeState: this };
   }
 
-  nodeClick(event: PointerEvent | null, d: any) {
+  onNodeClick(event: PointerEvent | null, d: any) {
     this.selected = d;
+
+    console.log("onNodeClick:::", { d });
+
     if (d.children) {
       d._children = d.children;
       d.children = null;
@@ -213,13 +213,16 @@ class TreeChart<T> {
   }
 
   addNode(d: any) {
-    const newNode = d3.hierarchy(d) as any;
-    // console.log("addNode:::", { d, newNode });
+    if (!this.selected) throw Error("a node needs to be selected before you can go around adding nodes");
+    // console.log("addNode:::", { d });
+
+    const newNode = d3.hierarchy(d.data) as any;
+    console.log("addNode:::", { newNode, d });
 
     newNode.depth = this.selected.depth + 1;
     newNode.height = this.selected.height - 1;
     newNode.parent = this.selected;
-    newNode.id = d.data.name;
+    newNode.id = d.data.id;
     newNode.data.name = d.data.name;
 
     // if selected is collapsed, open it before adding new node
@@ -236,14 +239,13 @@ class TreeChart<T> {
 
     this.selected.children.push(newNode);
     this.selected.data.children.push(newNode.data);
-
-    this.update(null, this.selected);
   }
 
   addNodes(arr: any[]) {
     arr.forEach((d) => {
       this.addNode(d);
     });
+    this.update(null, this.selected);
   }
 }
 
