@@ -1,5 +1,8 @@
 import * as d3 from "d3";
 import { HierarchicalData } from "./types";
+import { Api } from "./api.2";
+
+const api = new Api();
 
 class TreeChart<T> {
   root: any;
@@ -197,10 +200,8 @@ class TreeChart<T> {
     // return { svg: this.svg.node() as SVGSVGElement, treeState: this };
   }
 
-  onNodeClick(event: PointerEvent | null, d: any) {
-    this.selected = d;
-
-    console.log("onNodeClick:::", { d });
+  async onNodeClick(event: PointerEvent | null, d: any) {
+    const sameElement = d.id === this.selected?.id;
 
     if (d.children) {
       d._children = d.children;
@@ -209,6 +210,13 @@ class TreeChart<T> {
       d.children = d._children;
       d._children = null;
     }
+
+    this.selected = d;
+    const entries = await api.fetchNodes(d);
+    this.addNodes(entries as any[]);
+    console.log("onNodeClick:::", { d, sameElement });
+    // console.log("onNodeClick:::", { d, entries, sameElement });
+
     return this.update(event, d);
   }
 
@@ -245,7 +253,6 @@ class TreeChart<T> {
     arr.forEach((d) => {
       this.addNode(d);
     });
-    this.update(null, this.selected);
   }
 }
 
