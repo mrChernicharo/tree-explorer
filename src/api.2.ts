@@ -120,13 +120,13 @@ class Api {
         entries.push(org);
       }
     }
-    await wait(1000);
+    await wait(200);
     return { entries, totalCount: orgs.length };
   }
   async fetchOrgUsers(orgId: string, options: Opts) {
     const { limit, offset = 0 } = options;
     const orgUsers = users.filter((u) => u.parentId === orgId);
-    // console.log("fetchOrgUsers", { orgId, options, filteredUsers });
+    console.log("fetchOrgUsers", { orgId, options, orgUsers });
     const entries: User[] = [];
     for (let i = 0; i < limit; i++) {
       const idx = limit * offset + i;
@@ -135,7 +135,7 @@ class Api {
         entries.push(user);
       }
     }
-    await wait(1000);
+    await wait(200);
     return { entries, totalCount: orgUsers.length };
   }
   async fetchUserServices(userId: string, options: Opts) {
@@ -152,7 +152,7 @@ class Api {
         entries.push(service);
       }
     }
-    await wait(1000);
+    await wait(200);
     return { entries, totalCount: serviceIds.length };
   }
   async fetchUserServiceInteractions(userId: string, serviceId: string, options: Opts) {
@@ -168,7 +168,7 @@ class Api {
       }
     }
     // console.log("::: fetchUserServiceInteractions", { userId, serviceId, userServiceInteractions, entries });
-    await wait(1000);
+    await wait(200);
     return { entries, totalCount: userServiceInteractions.length };
   }
   //
@@ -184,13 +184,15 @@ class Api {
 
     // depth 0 root -> orgs
     if (selectedNode.data.type === "root") {
-      const { entries: orgs, totalCount } = await this.fetchOrgs({ limit, offset: this.orgOffset });
-
+      const { entries: orgs } = await this.fetchOrgs({ limit, offset: this.orgOffset });
       this.orgOffset++;
 
-      console.log({ orgs, totalCount });
-
-      const orgNodes = orgs.map((org) => ({ data: { ...org, count: totalCount } }));
+      const orgProms: Promise<any>[] = orgs.map((org) => this.fetchOrgUsers(org.id, { limit, offset: 0 }));
+      const totalCounts = (await Promise.all(orgProms)).map((entry) => entry.totalCount);
+      //   console.log("root", { orgs, totalCounts });
+      const orgNodes = orgs.map((org, i) => {
+        return { data: { ...org, count: totalCounts[i] } };
+      });
       return orgNodes;
       // treeChart.addNodes(orgNodes);
     }
@@ -200,12 +202,14 @@ class Api {
       if (!this.orgOffsets[orgId]) {
         this.orgOffsets[orgId] = 0;
       }
-      const { entries: users, totalCount } = await this.fetchOrgUsers(orgId, { limit, offset: this.orgOffsets[orgId] });
+      const { entries: users } = await this.fetchOrgUsers(orgId, { limit, offset: this.orgOffsets[orgId] });
       this.orgOffsets[orgId]++;
 
-      console.log({ users, totalCount });
+      const userProms: Promise<any>[] = users.map((user) => this.fetchUserServices(user.id, { limit, offset: 0 }));
+      const totalCounts = (await Promise.all(userProms)).map((entry) => entry.totalCount);
 
-      const userNodes = users.map((user) => ({ data: { ...user, count: totalCount } }));
+      //   console.log("org", { users, totalCount });
+      const userNodes = users.map((user, i) => ({ data: { ...user, count: totalCounts[i] } }));
       return userNodes;
       // treeChart.addNodes(userNodes);
     }
@@ -221,8 +225,13 @@ class Api {
       });
       this.userOffsets[userId]++;
 
-      const serviceNodes = services.map((service) => ({
-        data: { ...service, id: `${service.id}::${userId}`, count: totalCount },
+      const serviceProms: Promise<any>[] = services.map((service) =>
+        this.fetchUserServiceInteractions(userId, service.id, { limit, offset: 0 })
+      );
+      const totalCounts = (await Promise.all(serviceProms)).map((entry) => entry.totalCount);
+
+      const serviceNodes = services.map((service, i) => ({
+        data: { ...service, id: `${service.id}::${userId}`, count: totalCounts[i] },
       }));
       return serviceNodes;
       // treeChart.addNodes(serviceNodes);
@@ -238,7 +247,7 @@ class Api {
         this.interactionOffsets[serviceId][userId] = 0;
       }
 
-      const { entries: interactions, totalCount } = await this.fetchUserServiceInteractions(userId, serviceId, {
+      const { entries: interactions } = await this.fetchUserServiceInteractions(userId, serviceId, {
         limit,
         offset: this.interactionOffsets[serviceId][userId],
       });
@@ -248,7 +257,7 @@ class Api {
         data: {
           ...interaction,
           id: `${interaction.id}::${serviceId}::${userId}`,
-          count: totalCount,
+          count: 0,
         },
       }));
       return interactionNodes;

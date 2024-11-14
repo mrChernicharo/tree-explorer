@@ -22,7 +22,7 @@ class TreeChart<T> {
   marginBottom = 10;
   marginLeft = 40;
 
-  dx = 48;
+  dx = 36;
   dy = window.innerWidth / 6;
   // const dy = (width - marginRight - marginLeft) / (1 + root.height);
   deltaScroll = 0.8;
@@ -176,7 +176,8 @@ class TreeChart<T> {
       .attr("xlink:href", "plus.svg")
       .attr("width", (d: any) => d.data.name.length * 6)
       .attr("height", 20)
-      .attr("y", 20)
+      .attr("x", (d: any) => d.data.name.length * 3 + 32)
+      .attr("y", -10)
       .style("display", "none");
 
     console.log("update :: ", {
@@ -203,7 +204,9 @@ class TreeChart<T> {
       .attr("stroke-opacity", 0)
       .style("visibility", (d: any) => (d.id == this.selected?.id && this.isLoading ? "visible" : "hidden"));
 
-    nodeUpdate.select(".plus-icon").style("display", (d: any) => (d.id === this.selected?.id ? "block" : "none"));
+    nodeUpdate
+      .select(".plus-icon")
+      .style("display", (d: any) => (!this.isLoading && d.id === this.selected?.id ? "block" : "none"));
 
     nodeUpdate.select("text").text((d: any) => {
       console.log(d);
@@ -326,13 +329,13 @@ class TreeChart<T> {
   #addNode(d: any) {
     if (!this.selected) throw Error("a node needs to be selected before you can go around adding nodes");
     const newNode = d3.hierarchy(d.data) as any;
-    // console.log("addNode:::", { newNode, d });
+    console.log("addNode:::", { newNode, d });
 
     newNode.depth = this.selected.depth + 1;
     newNode.height = this.selected.height - 1;
     newNode.parent = this.selected;
     newNode.id = d.data.id;
-    newNode.data.name = d.data.name;
+    newNode.data = d.data;
 
     // if selected is collapsed, open it before adding new node
     if (this.selected._children && !this.selected.children) {
