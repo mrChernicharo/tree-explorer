@@ -125,18 +125,18 @@ class Api {
   }
   async fetchOrgUsers(orgId: string, options: Opts) {
     const { limit, offset = 0 } = options;
-    const filteredUsers = users.filter((u) => u.parentId === orgId);
+    const orgUsers = users.filter((u) => u.parentId === orgId);
     // console.log("fetchOrgUsers", { orgId, options, filteredUsers });
     const entries: User[] = [];
     for (let i = 0; i < limit; i++) {
       const idx = limit * offset + i;
-      const user = filteredUsers[idx];
+      const user = orgUsers[idx];
       if (user) {
         entries.push(user);
       }
     }
     await wait(1000);
-    return { entries, totalCount: filteredUsers.length };
+    return { entries, totalCount: orgUsers.length };
   }
   async fetchUserServices(userId: string, options: Opts) {
     const { limit, offset = 0 } = options;
@@ -179,13 +179,18 @@ class Api {
 
   async fetchNodes(selectedNode: any) {
     if (!selectedNode) return;
+
     console.log("fetch btn onClick -->", { selectedNode });
+
     // depth 0 root -> orgs
     if (selectedNode.data.type === "root") {
       const { entries: orgs, totalCount } = await this.fetchOrgs({ limit, offset: this.orgOffset });
+
       this.orgOffset++;
 
-      const orgNodes = orgs.map((org) => ({ data: { ...org, count: totalCount - orgs.length } }));
+      console.log({ orgs, totalCount });
+
+      const orgNodes = orgs.map((org) => ({ data: { ...org, count: totalCount } }));
       return orgNodes;
       // treeChart.addNodes(orgNodes);
     }
@@ -198,7 +203,9 @@ class Api {
       const { entries: users, totalCount } = await this.fetchOrgUsers(orgId, { limit, offset: this.orgOffsets[orgId] });
       this.orgOffsets[orgId]++;
 
-      const userNodes = users.map((user) => ({ data: { ...user, count: totalCount - users.length } }));
+      console.log({ users, totalCount });
+
+      const userNodes = users.map((user) => ({ data: { ...user, count: totalCount } }));
       return userNodes;
       // treeChart.addNodes(userNodes);
     }
@@ -215,7 +222,7 @@ class Api {
       this.userOffsets[userId]++;
 
       const serviceNodes = services.map((service) => ({
-        data: { ...service, id: `${service.id}::${userId}`, count: totalCount - services.length },
+        data: { ...service, id: `${service.id}::${userId}`, count: totalCount },
       }));
       return serviceNodes;
       // treeChart.addNodes(serviceNodes);
@@ -241,7 +248,7 @@ class Api {
         data: {
           ...interaction,
           id: `${interaction.id}::${serviceId}::${userId}`,
-          count: totalCount - interactions.length,
+          count: totalCount,
         },
       }));
       return interactionNodes;

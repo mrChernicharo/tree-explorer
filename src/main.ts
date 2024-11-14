@@ -18,7 +18,7 @@ async function initializeTree() {
   const treeChart = new TreeChart<any>();
   const api = new Api();
   const { totalCount } = await api.fetchOrgs({ limit, offset: 0 });
-  const { svg } = treeChart.buildTree({ name: "orgs", type: "root", children: [] });
+  const { svg } = treeChart.buildTree({ name: "orgs", type: "root", children: [], count: totalCount });
   canvas.appendChild(svg);
 }
 
