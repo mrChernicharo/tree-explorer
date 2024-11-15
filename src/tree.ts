@@ -22,7 +22,7 @@ class TreeChart<T> {
   marginBottom = 10;
   marginLeft = 40;
 
-  dx = 36;
+  dx = 26;
   dy = window.innerWidth / 6;
   // const dy = (width - marginRight - marginLeft) / (1 + root.height);
   deltaScroll = 0.8;
@@ -75,7 +75,7 @@ class TreeChart<T> {
 
   onWheel(event: WheelEvent) {
     const { x, y, deltaY } = event;
-    console.log({ event, x, y, deltaY, vb: this.svg.attr("viewBox") });
+    // console.log({ event, x, y, deltaY, vb: this.svg.attr("viewBox") });
     let [x1, y1, x2, y2] = this.svg
       .attr("viewBox")
       .split(",")
@@ -126,7 +126,7 @@ class TreeChart<T> {
       }
       depths[n.depth]++;
     });
-    console.log(depths);
+    // console.log(depths);
 
     // Enter any new nodes at the parent's previous position.
     const nodeEnter: any = node
@@ -148,24 +148,20 @@ class TreeChart<T> {
       .attr("class", "node-text")
       .attr("dy", "0.32em")
       .attr("text-anchor", (d: any) => "center")
-      .text((d: any) => {
-        console.log(d);
-        return d.data.name;
-        // return d.data.name + " " + ((d.data?.count ?? 0) - (d.data?.children?.length ?? 0));
-      })
+      .text((d: any) => d.data.name)
       .attr("stroke-linejoin", "round")
       .attr("stroke-width", 3)
       .attr("stroke", "white")
       .attr("paint-order", "stroke");
 
     nodeEnter
-      .append("circle")
+      .append("image")
       .attr("class", "loading-spinner")
-      .attr("cx", (d: any) => 25)
-      .attr("cy", 25)
-      .attr("r", 12)
-      .attr("stroke-width", 2)
-      .attr("fill", "#707070");
+      .attr("xlink:href", "spinner.svg")
+      .attr("width", 25)
+      .attr("height", 25)
+      .attr("x", (d: any) => d.data.name.length * 3 + 32)
+      .attr("y", -12);
 
     // const lastNodeInRow = sourceNode?.leaves().at(-1);
     // console.log("lastNodeInRow", { leaves: sourceNode.leaves(), lastNodeInRow });
@@ -180,14 +176,11 @@ class TreeChart<T> {
       .attr("y", -10)
       .style("display", "none");
 
-    console.log("update :: ", {
-      isLoading: this.isLoading,
-      root: this.root,
-      source: sourceNode,
-      selected: this.selected,
-    });
+    /**************************************************/
 
+    // Update nodes...
     const nodeUpdate = node.merge(nodeEnter).transition(transition);
+
     // Transition nodes to their new position.
     nodeUpdate
       .attr("transform", (d: any) => `translate(${d.y},${d.x})`)
@@ -204,16 +197,16 @@ class TreeChart<T> {
       .attr("stroke-opacity", 0)
       .style("visibility", (d: any) => (d.id == this.selected?.id && this.isLoading ? "visible" : "hidden"));
 
-    nodeUpdate
-      .select(".plus-icon")
-      .style("display", (d: any) => (!this.isLoading && d.id === this.selected?.id ? "block" : "none"));
+    nodeUpdate.select(".plus-icon").style("display", (d: any) => {
+      const remainingChildren = this.#getRemainingChildCount(d);
+      return !this.isLoading && d.id === this.selected?.id && remainingChildren > 0 ? "block" : "none";
+    });
 
     nodeUpdate.select("text").text((d: any) => {
-      console.log(d);
-      // return d.data.name;
-      return d.data.name + " " + ((d.data?.count ?? 0) - (d.data?.children?.length ?? 0));
+      const remainingChildren = this.#getRemainingChildCount(d);
+      const countStr = remainingChildren > 0 ? `+${remainingChildren}` : "";
+      return `${d.data.name} ${countStr}`;
     });
-    // console.log({ btnAppendingNode, selected: this.selected });
 
     // Transition exiting nodes to the parent's new position.
     const nodeExit = node.exit().transition(transition).remove();
@@ -223,7 +216,9 @@ class TreeChart<T> {
       .attr("fill-opacity", 0)
       .attr("stroke-opacity", 0);
 
-    // Update the links…
+    /**************************************************/
+
+    // Update links…
     const link = this.gLink.selectAll("path").data(links, (d: any) => d.target.id);
 
     // Enter any new links at the parent's previous position.
@@ -260,10 +255,10 @@ class TreeChart<T> {
 
   async onNodeClick(event: PointerEvent | null, d: any) {
     const sameElement = d.id === this.selected?.id;
-
-    console.log("onNodeClick:::", event?.composedPath(), { event, d, root: this.root });
+    // console.log("onNodeClick:::", event?.composedPath(), { event, d, root: this.root });
     if (this.root.id === d.id) {
-      console.log("clicked ROOT");
+      // clicked ROOT
+      // console.log("clicked ROOT");
     }
 
     let clickedNode = false;
@@ -282,19 +277,19 @@ class TreeChart<T> {
       this.isLoading = true;
       this.update(null, d);
       const newNodes = (await api.fetchNodes(d)) as any[];
-      console.log("clicked plus-icon", { d, newNodes });
+      // console.log("clicked plus-icon", { d, newNodes });
       this.addNodes(newNodes);
       this.isLoading = false;
       return this.update(null, d);
     }
 
     if (clickedNode) {
-      console.log("clicked NODE");
+      // console.log("clicked NODE");
       if (sameElement) {
         this.selected = null;
 
         if (d.children) {
-          console.log("close!");
+          // console.log("close!");
           d._children = d.children;
           d.children = null;
         }
@@ -302,22 +297,24 @@ class TreeChart<T> {
         this.selected = d;
 
         if ([undefined, 0].includes(d.data?.children?.length)) {
-          console.log("first click!");
-          this.isLoading = true;
-          this.update(null, d);
-          const newNodes = (await api.fetchNodes(d)) as any[];
-          this.addNodes(newNodes);
-          this.isLoading = false;
+          // console.log("first click!", { el: { ...(event?.target as any)["__data__"] }, d: { ...d } });
+          if (d.data.count > 0) {
+            this.isLoading = true;
+            this.update(null, d);
+            const newNodes = (await api.fetchNodes(d)) as any[];
+            this.addNodes(newNodes);
+            this.isLoading = false;
+          }
         } else if (d.data.children.length > 0) {
           if (d.children) {
-            console.log("just select the open node");
+            // console.log("just select the open node");
           } else {
-            console.log("open closed node!");
+            // console.log("open closed node!");
             d.children = d._children;
             d._children = null;
           }
         } else {
-          console.log("just open!");
+          // console.log("just open!");
           d.children = d._children;
           d._children = null;
         }
@@ -329,7 +326,7 @@ class TreeChart<T> {
   #addNode(d: any) {
     if (!this.selected) throw Error("a node needs to be selected before you can go around adding nodes");
     const newNode = d3.hierarchy(d.data) as any;
-    console.log("addNode:::", { newNode, d });
+    // console.log("addNode:::", { newNode, d });
 
     newNode.depth = this.selected.depth + 1;
     newNode.height = this.selected.height - 1;
@@ -357,6 +354,10 @@ class TreeChart<T> {
     arr.forEach((d) => {
       this.#addNode(d);
     });
+  }
+
+  #getRemainingChildCount(d: any) {
+    return (d.data?.count ?? 0) - (d.data?.children?.length ?? 0);
   }
 }
 

@@ -110,7 +110,7 @@ class Api {
 
   async fetchOrgs(options: Opts) {
     const { limit, offset = 0 } = options;
-    console.log("fetchOrgs", options);
+    // console.log("fetchOrgs", options);
 
     const entries: Org[] = [];
     for (let i = 0; i < limit; i++) {
@@ -126,7 +126,7 @@ class Api {
   async fetchOrgUsers(orgId: string, options: Opts) {
     const { limit, offset = 0 } = options;
     const orgUsers = users.filter((u) => u.parentId === orgId);
-    console.log("fetchOrgUsers", { orgId, options, orgUsers });
+    // console.log("fetchOrgUsers", { orgId, options, orgUsers });
     const entries: User[] = [];
     for (let i = 0; i < limit; i++) {
       const idx = limit * offset + i;
@@ -180,7 +180,7 @@ class Api {
   async fetchNodes(selectedNode: any) {
     if (!selectedNode) return;
 
-    console.log("fetch btn onClick -->", { selectedNode });
+    // console.log("fetch btn onClick -->", { selectedNode });
 
     // depth 0 root -> orgs
     if (selectedNode.data.type === "root") {
