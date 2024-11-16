@@ -275,4 +275,5 @@ class Api {
   }
 }
 
-export { Api };
+const api = new Api();
+export { api };

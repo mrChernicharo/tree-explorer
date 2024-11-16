@@ -1,14 +1,12 @@
 import * as d3 from "d3";
 import { HierarchicalData, ILink, INode } from "./types";
-import { Api } from "./api";
+import { api } from "./api";
 // import plusIcon from "plus.svg";
 
-const api = new Api();
-
 class TreeChart<T> {
-  root: any;
-  svg: any;
-  tree: any;
+  root!: d3.HierarchyNode<any> & INode;
+  svg!: d3.Selection<SVGSVGElement, any, any, any>;
+  tree!: d3.TreeLayout<T>;
   diagonal: any;
   gNode: any;
   gLink: any;
@@ -27,11 +25,11 @@ class TreeChart<T> {
   dy = window.innerWidth > 600 ? window.innerWidth / 6 : 150;
   deltaScroll = 0.8;
 
-  buildTree(hierarchicalData: HierarchicalData<T>, drawDepth = -1) {
-    this.root = d3.hierarchy(hierarchicalData) as any;
+  initTree(hierarchicalData: HierarchicalData<T>, drawDepth = -1) {
+    this.root = d3.hierarchy(hierarchicalData) as d3.HierarchyNode<any> & INode;
 
     // Define the tree layout and the shape for links.
-    this.tree = d3.tree().nodeSize([this.dx, this.dy]);
+    this.tree = d3.tree<T>().nodeSize([this.dx, this.dy]);
     this.diagonal = d3
       .linkHorizontal()
       .x((d) => (d as any).y)
@@ -69,7 +67,7 @@ class TreeChart<T> {
     return this.update(null, this.root);
   }
 
-  update(event: PointerEvent | null, sourceNode: any) {
+  update(event: PointerEvent | null, sourceNode: INode) {
     const duration = event?.altKey ? 2000 : 250; // hold the alt key to slow down the transition
     const nodes = this.root.descendants();
     const links = this.root.links();
@@ -79,7 +77,7 @@ class TreeChart<T> {
 
     let left = this.root;
     let right = this.root;
-    this.root.eachBefore((node: any) => {
+    this.root.eachBefore((node: d3.HierarchyNode<any> & INode) => {
       if (node.x < left.x) left = node;
       if (node.x > right.x) right = node;
     });
@@ -91,18 +89,16 @@ class TreeChart<T> {
       .transition()
       .duration(duration)
       .attr("height", height)
-      .attr("viewBox", [
-        sourceNode.y - this.width / 2 + this.marginLeft,
-        sourceNode.x - this.dx / 2,
-        this.width,
-        this.dx,
-      ] as any); // center view according to selected node
+      .attr(
+        "viewBox",
+        [sourceNode.y - this.width / 2 + this.marginLeft, sourceNode.x - this.dx / 2, this.width, this.dx].join()
+      ); // center view according to selected node
 
     // Update the nodes…
     const node = this.gNode.selectAll("g").data(nodes, (d: INode) => d.id);
 
     // Enter any new nodes at the parent's previous position.
-    const nodeEnter: any = node
+    const nodeEnter = node
       .enter()
       .append("g")
       .attr("transform", (d: INode) => `translate(${sourceNode.y0},${sourceNode.x0})`)
@@ -199,7 +195,7 @@ class TreeChart<T> {
     const nodeExit = node.exit().transition(transition).remove();
 
     nodeExit
-      .attr("transform", (d: INode) => `translate(${sourceNode.y},${sourceNode.x})`)
+      .attr("transform", () => `translate(${sourceNode.y},${sourceNode.x})`)
       .attr("fill-opacity", 0)
       .attr("stroke-opacity", 0);
 
@@ -207,7 +203,6 @@ class TreeChart<T> {
 
     // Update links…
     const link = this.gLink.selectAll("path").data(links, (d: ILink) => {
-      console.log("link", d);
       return d.target.id;
     });
 
@@ -218,7 +213,7 @@ class TreeChart<T> {
       .attr("d", (d: ILink) => {
         const o = { x: sourceNode.x0, y: sourceNode.y0 };
         return this.diagonal({ source: o, target: o });
-      }) as any;
+      });
 
     // Transition links to their new position.
     const linkUpdate = link.merge(linkEnter).transition(transition).attr("d", this.diagonal);
@@ -240,77 +235,6 @@ class TreeChart<T> {
     });
 
     return { svg: this.svg.node() as SVGSVGElement };
-    // return { svg: this.svg.node() as SVGSVGElement, treeState: this };
-  }
-
-  async onNodeClick(event: PointerEvent | null, d: INode) {
-    const sameElement = d.id === this.selected?.id;
-    // console.log("onNodeClick:::", event?.composedPath(), { event, d, root: this.root });
-    if (this.root.id === d.id) {
-      // clicked ROOT
-      // console.log("clicked ROOT");
-    }
-
-    let clickedNode = false;
-    let clickedPlus = false;
-    event?.composedPath().forEach((element) => {
-      const el = element as HTMLElement;
-      if (el.classList && (el.classList.contains("node") || el.classList.contains("node-text"))) {
-        clickedNode = true;
-      }
-      if (el.classList && (el.classList.contains("plus-icon") || el.classList.contains("remaining-text"))) {
-        clickedPlus = true;
-      }
-    });
-
-    if (clickedPlus) {
-      this.isLoading = true;
-      this.update(null, d);
-      const newNodes = (await api.fetchNodes(d)) as any[];
-      // console.log("clicked plus-icon", { d, newNodes });
-      this.addNodes(newNodes);
-      this.isLoading = false;
-      return this.update(null, d);
-    }
-
-    if (clickedNode) {
-      // console.log("clicked NODE");
-      if (sameElement) {
-        this.selected = null;
-
-        if (d.children) {
-          // console.log("close!");
-          d._children = d.children;
-          d.children = null;
-        }
-      } else {
-        this.selected = d;
-
-        if ([undefined, 0].includes(d.data?.children?.length)) {
-          // console.log("first click!", { el: { ...(event?.target as any)["__data__"] }, d: { ...d } });
-          if (d.data.count > 0) {
-            this.isLoading = true;
-            this.update(null, d);
-            const newNodes = (await api.fetchNodes(d)) as any[];
-            this.addNodes(newNodes);
-            this.isLoading = false;
-          }
-        } else if (d.data.children.length > 0) {
-          if (d.children) {
-            // console.log("just select the open node");
-          } else {
-            // console.log("open closed node!");
-            d.children = d._children;
-            d._children = null;
-          }
-        } else {
-          // console.log("just open!");
-          d.children = d._children;
-          d._children = null;
-        }
-      }
-      return this.update(event, d);
-    }
   }
 
   #onWheel(event: WheelEvent) {
@@ -324,13 +248,87 @@ class TreeChart<T> {
     this.svg
       .transition()
       .duration(320)
-      .attr("viewBox", [x1, (y1 += deltaY * this.deltaScroll), x2, y2] as any);
+      .attr("viewBox", [x1, (y1 += deltaY * this.deltaScroll), x2, y2].join());
+  }
+
+  #onResize() {
+    const svgEl = document.querySelector("#frame svg");
+    this.width = window.innerWidth;
+    this.dy = this.width / 6;
+    (svgEl as any).width.baseVal.value = this.width;
+  }
+
+  async onNodeClick(event: PointerEvent | null, d: INode) {
+    const sameElement = d.id === this.selected?.id;
+    // console.log("onNodeClick:::", event?.composedPath(), { event, d, root: this.root });
+
+    let clickedNode = false;
+    let clickedPlus = false;
+    for (const element of event!.composedPath() || []) {
+      const el = element as HTMLElement;
+      if (el.classList && (el.classList.contains("node") || el.classList.contains("node-text"))) {
+        clickedNode = true;
+        break;
+      }
+      if (el.classList && (el.classList.contains("plus-icon") || el.classList.contains("remaining-text"))) {
+        clickedPlus = true;
+        break;
+      }
+    }
+
+    if (clickedPlus) {
+      await this.#handleFetchNodeData(d);
+      return this.update(null, d);
+    }
+
+    if (clickedNode) {
+      if (sameElement) {
+        this.selected = null;
+
+        if (d.children) {
+          this.#collapseNodeLinks(d); // close!
+        }
+      } else {
+        this.selected = d;
+
+        // clicking node for the first time
+        if ([undefined, 0].includes(d.data?.children?.length)) {
+          if (d.data.count > 0) {
+            await this.#handleFetchNodeData(d); // fetch if node has children
+          }
+        } else if (d.data.children.length > 0) {
+          if (!d.children) {
+            this.#expandNodeLinks(d);
+          }
+        } else {
+          this.#expandNodeLinks(d);
+        }
+      }
+      return this.update(event, d);
+    }
+  }
+
+  #collapseNodeLinks(d: INode) {
+    d._children = d.children;
+    d.children = null;
+  }
+  #expandNodeLinks(d: INode) {
+    d.children = d._children;
+    d._children = null;
+  }
+
+  async #handleFetchNodeData(d: INode) {
+    this.isLoading = true;
+    this.update(null, d);
+    const newNodes = (await api.fetchNodes(d)) as any[];
+    this.addNodes(newNodes);
+    this.isLoading = false;
   }
 
   #addNode(d: INode) {
     if (!this.selected) throw Error("a node needs to be selected before you can go around adding nodes");
     const newNode = d3.hierarchy(d.data) as unknown as INode;
-    console.log("addNode:::", { newNode, d });
+    // console.log("addNode:::", { newNode, d });
 
     newNode.depth = this.selected.depth + 1;
     newNode.height = this.selected.height - 1;
@@ -354,7 +352,7 @@ class TreeChart<T> {
     this.selected.data.children.push(newNode.data);
   }
 
-  addNodes(arr: any[]) {
+  addNodes(arr: INode[]) {
     arr.forEach((d) => {
       this.#addNode(d);
     });
@@ -370,13 +368,6 @@ class TreeChart<T> {
 
   #getNodeWidth(d: INode) {
     return this.#getTextWidth(d) + this.nodeMargin * 2;
-  }
-
-  #onResize() {
-    const svgEl = document.querySelector("#frame svg");
-    this.width = window.innerWidth;
-    this.dy = this.width / 6;
-    (svgEl as any).width.baseVal.value = this.width;
   }
 }
 
