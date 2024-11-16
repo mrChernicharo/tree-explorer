@@ -1,0 +1,398 @@
+[
+  {
+    "id": 1,
+    "imageUrl": "https://picsum.photos/seed/SIzSebe/120/80?grayscale",
+    "company": "OpenAI",
+    "name": "GPT-3",
+    "category": "Language Model",
+    "description": "A powerful language model capable of generating human-quality text.",
+    "release_date": 2020
+  },
+  {
+    "id": 2,
+    "imageUrl": "https://picsum.photos/seed/nY3cj8kWMQ/120/80?grayscale&blur=4",
+    "company": "OpenAI",
+    "name": "DALL-E 2",
+    "category": "Image Generation",
+    "description": "An AI system that creates realistic images and art from a description in natural language.",
+    "release_date": 2022
+  },
+  {
+    "id": 3,
+    "imageUrl": "https://picsum.photos/seed/ZgQzD/120/80?grayscale",
+    "company": "OpenAI",
+    "name": "Codex",
+    "category": "Code Generation",
+    "description": "An AI assistant that helps with programming tasks.",
+    "release_date": 2021
+  },
+  {
+    "id": 4,
+    "imageUrl": "https://picsum.photos/seed/SpTOSbAN/120/80?blur=9",
+    "company": "Google AI",
+    "name": "LaMDA",
+    "category": "Language Model",
+    "description": "A language model for dialogue applications.",
+    "release_date": 2021
+  },
+  {
+    "id": 5,
+    "imageUrl": "https://picsum.photos/seed/WhbLM/120/80?grayscale&blur=2",
+    "company": "Google AI",
+    "name": "Imagen",
+    "category": "Image Generation",
+    "description": "A text-to-image model that generates realistic images from text descriptions.",
+    "release_date": 2022
+  },
+  {
+    "id": 6,
+    "imageUrl": "https://picsum.photos/seed/a6fTo3fe/120/80?blur=5",
+    "company": "Google AI",
+    "name": "PaLM",
+    "category": "Language Model",
+    "description": "A versatile language model for various tasks.",
+    "release_date": 2022
+  },
+  {
+    "id": 7,
+    "imageUrl": "https://picsum.photos/seed/gdYqxlo/120/80?blur=9",
+    "company": "Microsoft Azure AI",
+    "name": "Azure Cognitive Services",
+    "category": "AI Services Suite",
+    "description": "A suite of AI services for building intelligent applications.",
+    "release_date": 2015
+  },
+  {
+    "id": 8,
+    "imageUrl": "https://picsum.photos/seed/RvmBN/120/80?grayscale&blur=9",
+    "company": "Microsoft Azure AI",
+    "name": "Azure Machine Learning",
+    "category": "Machine Learning Platform",
+    "description": "A cloud-based platform for building, training, and deploying machine learning models.",
+    "release_date": 2015
+  },
+  {
+    "id": 9,
+    "imageUrl": "https://picsum.photos/seed/PAleeec/120/80?grayscale&blur=3",
+    "company": "Amazon Web Services (AWS)",
+    "name": "Amazon SageMaker",
+    "category": "Machine Learning Platform",
+    "description": "A fully managed platform for building, training, and deploying machine learning models.",
+    "release_date": 2017
+  },
+  {
+    "id": 10,
+    "imageUrl": "https://picsum.photos/seed/aCrco3tJF/120/80?grayscale&blur=7",
+    "company": "Amazon Web Services (AWS)",
+    "name": "Amazon Rekognition",
+    "category": "Image and Video Analysis",
+    "description": "A service for analyzing images and videos.",
+    "release_date": 2016
+  },
+  {
+    "id": 11,
+    "imageUrl": "https://picsum.photos/seed/FYIrDUJa/120/80?blur=10",
+    "company": "Amazon Web Services (AWS)",
+    "name": "Amazon Polly",
+    "category": "Text-to-Speech",
+    "description": "A service that converts text into realistic speech.",
+    "release_date": 2016
+  },
+  {
+    "id": 12,
+    "imageUrl": "https://picsum.photos/seed/d2Od6g5c/120/80?grayscale&blur=4",
+    "name": "Hugging Face",
+    "category": "Machine Learning Platform",
+    "description": "Platform for building, training, and deploying machine learning models.",
+    "company": "Hugging Face",
+    "release_date": 2016
+  },
+  {
+    "id": 13,
+    "imageUrl": "https://picsum.photos/seed/JKDlx2P9/120/80?grayscale&blur=7",
+    "company": "Hugging Face",
+    "name": "Transformers",
+    "category": "Library",
+    "description": "A library for state-of-the-art natural language processing.",
+    "release_date": 2018
+  },
+  {
+    "id": 14,
+    "imageUrl": "https://picsum.photos/seed/5RpClSf/120/80?blur=2",
+    "company": "Hugging Face",
+    "name": "Datasets",
+    "category": "Dataset Hub",
+    "description": "A platform for sharing and accessing datasets.",
+    "release_date": 2019
+  },
+  {
+    "id": 15,
+    "imageUrl": "https://picsum.photos/seed/oZiXxcIN5M/120/80",
+    "company": "Hugging Face",
+    "name": "Model Hub",
+    "category": "Model Hub",
+    "description": "A platform for sharing and accessing machine learning models.",
+    "release_date": 2019
+  },
+  {
+    "id": 16,
+    "imageUrl": "https://picsum.photos/seed/3F4boDaHQ/120/80?grayscale&blur=5",
+    "company": "Babylon Health",
+    "name": "Babylon Health App",
+    "category": "Healthcare",
+    "description": "AI-powered health consultation and advice platform.",
+    "release_date": 2015
+  },
+  {
+    "id": 17,
+    "imageUrl": "https://picsum.photos/seed/BtD94jw/120/80?blur=9",
+    "company": "DeepMind Health",
+    "name": "AlphaFold",
+    "category": "Healthcare",
+    "description": "AI system for predicting protein structures.",
+    "release_date": 2018
+  },
+  {
+    "id": 18,
+    "imageUrl": "https://picsum.photos/seed/ovXUQ6Z/120/80?grayscale&blur=9",
+    "company": "Alpaca",
+    "name": "Alpaca Trading Platform",
+    "category": "Finance",
+    "description": "AI-powered trading platform.",
+    "release_date": 2019
+  },
+  {
+    "id": 19,
+    "imageUrl": "https://picsum.photos/seed/AqxVEOc3/120/80?blur=5",
+    "company": "ZestFinance",
+    "name": "Zest AI Platform",
+    "category": "Finance",
+    "description": "AI-powered credit assessment platform.",
+    "release_date": 2009
+  },
+  {
+    "id": 20,
+    "imageUrl": "https://picsum.photos/seed/IFKtLwlQv6/120/80?blur=3",
+    "company": "OpenAI",
+    "name": "ChatGPT",
+    "category": "Language Model",
+    "description": "A conversational AI capable of generating human-quality text.",
+    "release_date": 2022
+  },
+  {
+    "id": 21,
+    "imageUrl": "https://picsum.photos/seed/5ULBO06/120/80?grayscale&blur=1",
+    "company": "Google AI",
+    "name": "Bard",
+    "category": "Language Model",
+    "description": "Google's experimental conversational AI.",
+    "release_date": 2023
+  },
+  {
+    "id": 22,
+    "imageUrl": "https://picsum.photos/seed/rDbF6/120/80?grayscale&blur=5",
+    "company": "Meta",
+    "name": "LLaMA",
+    "category": "Language Model",
+    "description": "A large language model designed for research purposes.",
+    "release_date": 2023
+  },
+  {
+    "id": 23,
+    "imageUrl": "https://picsum.photos/seed/QC7Nv/120/80?blur=5",
+    "company": "Anthropic",
+    "name": "Claude",
+    "category": "Language Model",
+    "description": "A conversational AI focused on safety and helpfulness.",
+    "release_date": 2023
+  },
+  {
+    "id": 24,
+    "imageUrl": "https://picsum.photos/seed/X0QD6e5/120/80?blur=10",
+    "company": "Stability AI",
+    "name": "Stable Diffusion",
+    "category": "Image Generation",
+    "description": "A text-to-image model capable of generating highly detailed images.",
+    "release_date": 2022
+  },
+  {
+    "id": 25,
+    "imageUrl": "https://picsum.photos/seed/olaveIVO28/120/80?grayscale&blur=1",
+    "company": "Midjourney",
+    "name": "Midjourney",
+    "category": "Image Generation",
+    "description": "An AI program that creates images from textual descriptions.",
+    "release_date": 2022
+  },
+  {
+    "id": 26,
+    "imageUrl": "https://picsum.photos/seed/LXGyBCm3Jh/120/80?blur=6",
+    "company": "NVIDIA",
+    "name": "NVIDIA AI Platform",
+    "category": "AI Platform",
+    "description": "A comprehensive platform for developing, deploying, and managing AI applications.",
+    "release_date": 2017
+  },
+  {
+    "id": 27,
+    "imageUrl": "https://picsum.photos/seed/sgjsLChpM/120/80?blur=5",
+    "company": "Intel",
+    "name": "Intel AI Analytics Toolkit",
+    "category": "AI Toolkit",
+    "description": "A toolkit for accelerating AI workloads on Intel hardware.",
+    "release_date": 2018
+  },
+  {
+    "id": 28,
+    "imageUrl": "https://picsum.photos/seed/so3pdQac1p/120/80?blur=9",
+    "company": "IBM",
+    "name": "IBM Watson",
+    "category": "AI Services",
+    "description": "A suite of AI services for various industries, including healthcare, finance, and retail.",
+    "release_date": 2011
+  },
+  {
+    "id": 29,
+    "imageUrl": "https://picsum.photos/seed/eEcMqZwY/120/80?blur=5",
+    "company": "Salesforce",
+    "name": "Einstein AI",
+    "category": "AI for CRM",
+    "description": "AI-powered tools for sales, service, marketing, and IT.",
+    "release_date": 2016
+  },
+  {
+    "id": 30,
+    "imageUrl": "https://picsum.photos/seed/wvuMb5q/120/80?grayscale&blur=7",
+    "company": "Adobe",
+    "name": "Adobe Sensei",
+    "category": "AI for Creative Tools",
+    "description": "AI-powered features in Adobe's creative software suite.",
+    "release_date": 2016
+  },
+  {
+    "id": 31,
+    "imageUrl": "https://picsum.photos/seed/4guaInVHT/120/80?blur=8",
+    "company": "Amazon",
+    "name": "Alexa",
+    "category": "Virtual Assistant",
+    "description": "Voice-controlled intelligent personal assistant.",
+    "release_date": 2014
+  },
+  {
+    "id": 32,
+    "imageUrl": "https://picsum.photos/seed/B2RYyFIL5/120/80?grayscale&blur=6",
+    "name": "GitHub Copilot",
+    "category": "Code Completion",
+    "description": "AI pair programmer that suggests code completions in real-time.",
+    "company": "GitHub",
+    "release_date": 2021
+  },
+  {
+    "id": 33,
+    "imageUrl": "https://picsum.photos/seed/DzG0FI16/120/80?blur=8",
+    "name": "Midjourney",
+    "category": "Image Generation",
+    "description": "AI tool that generates images from text descriptions.",
+    "company": "Midjourney",
+    "release_date": 2022
+  },
+  {
+    "id": 34,
+    "imageUrl": "https://picsum.photos/seed/sRm5Nx/120/80?blur=8",
+    "name": "Google AutoML",
+    "category": "AutoML Platform",
+    "description": "Platform that automates the process of building and deploying machine learning models.",
+    "company": "Google",
+    "release_date": 2018
+  },
+  {
+    "id": 35,
+    "imageUrl": "https://picsum.photos/seed/hltHHy2/120/80?grayscale&blur=5",
+    "name": "Azure Machine Learning",
+    "category": "Machine Learning Platform",
+    "description": "Cloud-based platform for building, training, and deploying machine learning models.",
+    "company": "Microsoft Azure",
+    "release_date": 2015
+  },
+  {
+    "id": 36,
+    "imageUrl": "https://picsum.photos/seed/N1ccYfdZ/120/80?blur=4",
+    "name": "Grammarly",
+    "category": "AI Writing Assistant",
+    "description": "AI-powered writing assistant for grammar, spelling, and style.",
+    "company": "Grammarly",
+    "release_date": 2009
+  },
+  {
+    "id": 37,
+    "imageUrl": "https://picsum.photos/seed/Fq2lcDl/120/80?blur=8",
+    "name": "GitHub Copilot X",
+    "category": "AI Pair Programmer",
+    "description": "AI-powered pair programmer that can help with code generation, explanation, and testing.",
+    "company": "GitHub",
+    "release_date": 2023
+  },
+  {
+    "id": 38,
+    "imageUrl": "https://picsum.photos/seed/hevGl/120/80?grayscale&blur=10",
+    "name": "Amazon CodeWhisperer",
+    "category": "AI Pair Programmer",
+    "description": "AI-powered coding assistant that generates code suggestions.",
+    "company": "Amazon",
+    "release_date": 2022
+  },
+  {
+    "id": 39,
+    "imageUrl": "https://picsum.photos/seed/nMNsQxF/120/80?grayscale&blur=8",
+    "name": "RunwayML",
+    "category": "Machine Learning Platform",
+    "description": "Creative AI platform for building and deploying machine learning models.",
+    "company": "RunwayML",
+    "release_date": 2018
+  },
+  {
+    "id": 40,
+    "imageUrl": "https://picsum.photos/seed/PZFiivS/120/80?grayscale&blur=2",
+    "name": "TensorFlow",
+    "category": "Machine Learning Framework",
+    "description": "Open-source machine learning framework developed by Google.",
+    "company": "Google",
+    "release_date": 2015
+  },
+  {
+    "id": 41,
+    "imageUrl": "https://picsum.photos/seed/DcMIWK/120/80?blur=8",
+    "name": "PyTorch",
+    "category": "Machine Learning Framework",
+    "description": "Open-source machine learning framework developed by Meta.",
+    "company": "Meta",
+    "release_date": 2016
+  },
+  {
+    "id": 42,
+    "imageUrl": "https://picsum.photos/seed/2p3fQR/120/80?grayscale&blur=4",
+    "name": "Google Cloud Vertex AI",
+    "category": "Machine Learning Platform",
+    "description": "End-to-end platform for building and deploying machine learning models.",
+    "company": "Google",
+    "release_date": 2018
+  },
+  {
+    "id": 43,
+    "imageUrl": "https://picsum.photos/seed/JLzgKU5ZdS/120/80?blur=3",
+    "name": "Amazon SageMaker",
+    "category": "Machine Learning Platform",
+    "description": "Fully managed platform for building, training, and deploying machine learning models.",
+    "company": "Amazon Web Services (AWS)",
+    "release_date": 2017
+  },
+  {
+    "id": 44,
+    "imageUrl": "https://picsum.photos/seed/UqU8ewpe/120/80?grayscale&blur=2",
+    "name": "OpenAI Gym",
+    "category": "Reinforcement Learning",
+    "description": "Toolkit for developing and comparing reinforcement learning algorithms.",
+    "company": "OpenAI",
+    "release_date": 2016
+  }
+]

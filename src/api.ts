@@ -1,140 +1,125 @@
+import { faker } from "@faker-js/faker";
+import { Org, User, Company, Service, Interaction, DB, ServiceJSON, SimpleService } from "./types";
+import { getRandomInt } from "./helperFns";
+// @ts-ignore
+import servicesList from "/src/services.json";
+
 async function wait(milliseconds: number) {
   return new Promise((resolve) => setTimeout(resolve, milliseconds));
 }
 
-export interface DataEntry {
-  name: string;
-  id?: string;
-  parentId?: string;
-  value?: number;
-}
-
-export interface Org {
-  id: string;
-  name: string;
-  type: "org";
-  parentId: "root";
-}
-export interface User {
-  id: string;
-  name: string;
-  type: "user";
-  parentId: string;
-}
-export interface Company {
-  id: string;
-  name: string;
-  type: "company";
-  parentId: "root";
-}
-export interface Service {
-  id: string;
-  name: string;
-  type: "service";
-  parentId: string;
-}
-export interface Interaction {
-  id: string;
-  name: string;
-  type: "interaction";
-  userId: string;
-  serviceId: string;
-}
-
-const orgs: Org[] = [
-  { id: "org-1", type: "org", name: "Genesys", parentId: "root" },
-  { id: "org-2", type: "org", name: "Acuvity", parentId: "root" },
-  { id: "org-3", type: "org", name: "Uber", parentId: "root" },
-  { id: "org-4", type: "org", name: "Twilio", parentId: "root" },
-  { id: "org-5", type: "org", name: "Github", parentId: "root" },
-];
-
-const users: User[] = [
-  { id: "user-1", type: "user", name: "John", parentId: "org-1" },
-  { id: "user-2", type: "user", name: "Sarah", parentId: "org-1" },
-  { id: "user-3", type: "user", name: "Jude", parentId: "org-1" },
-  { id: "user-4", type: "user", name: "Juan", parentId: "org-1" },
-  { id: "user-5", type: "user", name: "Kate", parentId: "org-1" },
-  { id: "user-6", type: "user", name: "Aaron", parentId: "org-2" },
-  { id: "user-7", type: "user", name: "Tina", parentId: "org-2" },
-  { id: "user-8", type: "user", name: "Gordinha", parentId: "org-2" },
-  { id: "user-9", type: "user", name: "Nana", parentId: "org-3" },
-  { id: "user-10", type: "user", name: "Gordo", parentId: "org-4" },
-  { id: "user-11", type: "user", name: "Mulek do nome gigante falano", parentId: "org-4" },
-];
-
-const companies: Company[] = [
-  { id: "company-1", type: "company", name: "Open AI", parentId: "root" },
-  { id: "company-2", type: "company", name: "Google", parentId: "root" },
-  { id: "company-3", type: "company", name: "Meta", parentId: "root" },
-];
-
-const services: Service[] = [
-  { id: "service-1", type: "service", name: "ChatGPT", parentId: "company-1" },
-  { id: "service-2", type: "service", name: "Dall-E", parentId: "company-1" },
-  { id: "service-3", type: "service", name: "Gemini", parentId: "company-2" },
-  { id: "service-4", type: "service", name: "Bard", parentId: "company-2" },
-  { id: "service-5", type: "service", name: "Llama", parentId: "company-3" },
-];
-
-const interactions: Interaction[] = [
-  { id: "interaction-0", type: "interaction", name: "2024-11-21", userId: "user-1", serviceId: "service-1" },
-  { id: "interaction-01", type: "interaction", name: "2024-11-21", userId: "user-1", serviceId: "service-1" },
-  { id: "interaction-1", type: "interaction", name: "2024-11-21", userId: "user-1", serviceId: "service-1" },
-  { id: "interaction-2", type: "interaction", name: "2024-11-20", userId: "user-1", serviceId: "service-2" },
-  { id: "interaction-3", type: "interaction", name: "2024-11-19", userId: "user-1", serviceId: "service-3" },
-  { id: "interaction-4", type: "interaction", name: "2024-11-18", userId: "user-1", serviceId: "service-5" },
-  { id: "interaction-5", type: "interaction", name: "2024-11-17", userId: "user-2", serviceId: "service-1" },
-  { id: "interaction-6", type: "interaction", name: "2024-11-16", userId: "user-2", serviceId: "service-2" },
-  { id: "interaction-7", type: "interaction", name: "2024-11-15", userId: "user-3", serviceId: "service-3" },
-  { id: "interaction-8", type: "interaction", name: "2024-11-14", userId: "user-3", serviceId: "service-4" },
-  { id: "interaction-9", type: "interaction", name: "2024-11-13", userId: "user-3", serviceId: "service-5" },
-  { id: "interaction-10", type: "interaction", name: "2024-11-12", userId: "user-4", serviceId: "service-1" },
-  { id: "interaction-11", type: "interaction", name: "2024-11-11", userId: "user-4", serviceId: "service-2" },
-  { id: "interaction-12", type: "interaction", name: "2024-11-10", userId: "user-4", serviceId: "service-3" },
-  { id: "interaction-13", type: "interaction", name: "2024-11-09", userId: "user-4", serviceId: "service-4" },
-  { id: "interaction-14", type: "interaction", name: "2024-11-08", userId: "user-4", serviceId: "service-5" },
-  { id: "interaction-15", type: "interaction", name: "2024-11-08", userId: "user-11", serviceId: "service-1" },
-  { id: "interaction-16", type: "interaction", name: "2024-11-08", userId: "user-11", serviceId: "service-1" },
-  { id: "interaction-17", type: "interaction", name: "2024-11-08", userId: "user-11", serviceId: "service-1" },
-  { id: "interaction-18", type: "interaction", name: "2024-11-08", userId: "user-11", serviceId: "service-1" },
-  { id: "interaction-19", type: "interaction", name: "2024-11-08", userId: "user-11", serviceId: "service-1" },
-  { id: "interaction-20", type: "interaction", name: "2024-11-08", userId: "user-11", serviceId: "service-1" },
-  { id: "interaction-21", type: "interaction", name: "2024-11-08", userId: "user-11", serviceId: "service-1" },
-  { id: "interaction-22", type: "interaction", name: "2024-11-08", userId: "user-11", serviceId: "service-1" },
-];
-
 type Opts = {
-  limit: number;
-  offset: number;
+  limit?: number;
+  offset?: number;
 };
 
-const limit = 2;
+const LIMIT = 5;
 
 class Api {
+  db: DB = { orgs: [], users: [], companies: [], services: [], interactions: [] };
   orgOffset = 0;
   orgOffsets: { [k: string]: number } = {};
   userOffsets: { [k: string]: number } = {};
   interactionOffsets: { [k: string]: { [k: string]: number } } = {};
 
+  constructor() {
+    const orgCount = 5;
+    for (let i = 0; i < orgCount; i++) {
+      this.db.orgs.push({
+        id: `org-${i + 1}`,
+        name: faker.company.name(),
+        type: "org",
+        parentId: "root",
+      });
+    }
+    const userCount = orgCount * 50;
+    for (let i = 0; i < userCount; i++) {
+      const parentId = `org-${getRandomInt(1, this.db.orgs.length)}`;
+      this.db.users.push({
+        id: `user-${i + 1}`,
+        name: faker.person.fullName(),
+        type: "user",
+        parentId,
+      });
+    }
+
+    const companyNamesSet = new Set<string>();
+    for (const service of servicesList as ServiceJSON[]) {
+      companyNamesSet.add(service.company);
+    }
+    const companyNames = [...companyNamesSet];
+    for (let i = 0; i < companyNames.length; i++) {
+      this.db.companies.push({
+        id: `company-${i + 1}`,
+        name: companyNames[i],
+        type: "company",
+        parentId: "root",
+      });
+    }
+
+    for (let i = 0; i < servicesList.length; i++) {
+      const service = servicesList[i];
+      const parentId = `company-${this.db.companies.find((com) => com.name === service.company)!}`;
+      this.db.services.push({
+        ...service,
+        id: `service-${i + 1}`,
+        type: "service",
+        parentId,
+      });
+    }
+
+    let interactionIdx = 1;
+    for (const user of this.db.users) {
+      const serviceCount = getRandomInt(0, 16);
+      const userServiceIdsSet = new Set<string>();
+
+      while (userServiceIdsSet.size < serviceCount) {
+        const randomServiceIdx = getRandomInt(0, this.db.services.length - 1);
+        const service = this.db.services[randomServiceIdx];
+        userServiceIdsSet.add(service.id);
+      }
+
+      const interactionCount = serviceCount * getRandomInt(2, 40);
+      const userServiceIds = [...userServiceIdsSet];
+
+      const interactions: Interaction[] = [];
+      while (interactions.length < interactionCount) {
+        const serviceId = userServiceIds[getRandomInt(0, userServiceIds.length - 1)];
+        interactions.push({
+          id: `interaction-${interactionIdx}`,
+          type: "interaction",
+          name: faker.date
+            .between({ from: new Date().getTime() - 180 * 24 * 60 * 60 * 1000, to: new Date() })
+            .toLocaleString("en"),
+          userId: user.id,
+          serviceId,
+        });
+        interactionIdx++;
+      }
+
+      this.db.interactions.push(...interactions);
+    }
+    console.log(this.db);
+  }
+
   async fetchOrgs(options: Opts) {
-    const { limit, offset = 0 } = options;
+    const { limit = LIMIT, offset = 0 } = options;
     // console.log("fetchOrgs", options);
 
     const entries: Org[] = [];
     for (let i = 0; i < limit; i++) {
       const idx = limit * offset + i;
-      const org = orgs[idx];
+      const org = this.db.orgs[idx];
       if (org) {
         entries.push(org);
       }
     }
     await wait(200);
-    return { entries, totalCount: orgs.length };
+    return { entries, totalCount: this.db.orgs.length };
   }
   async fetchOrgUsers(orgId: string, options: Opts) {
-    const { limit, offset = 0 } = options;
-    const orgUsers = users.filter((u) => u.parentId === orgId);
+    const { limit = LIMIT, offset = 0 } = options;
+    const orgUsers = this.db.users.filter((u) => u.parentId === orgId);
     // console.log("fetchOrgUsers", { orgId, options, orgUsers });
     const entries: User[] = [];
     for (let i = 0; i < limit; i++) {
@@ -148,15 +133,15 @@ class Api {
     return { entries, totalCount: orgUsers.length };
   }
   async fetchUserServices(userId: string, options: Opts) {
-    const { limit, offset = 0 } = options;
-    const userInteractions = interactions.filter((s) => s.userId === userId);
+    const { limit = LIMIT, offset = 0 } = options;
+    const userInteractions = this.db.interactions.filter((s) => s.userId === userId);
     const serviceIds = [...new Set(userInteractions.map((int) => int.serviceId))];
     // console.log("fetchUserServices", { userId, options, userInteractions });
-    const entries: Service[] = [];
+    const entries: SimpleService[] = [];
     for (let i = 0; i < limit; i++) {
       const idx = limit * offset + i;
       const serviceId = serviceIds[idx];
-      const service = services.find((s) => s.id === serviceId);
+      const service = this.db.services.find((s) => s.id === serviceId);
       if (service) {
         entries.push(service);
       }
@@ -165,8 +150,10 @@ class Api {
     return { entries, totalCount: serviceIds.length };
   }
   async fetchUserServiceInteractions(userId: string, serviceId: string, options: Opts) {
-    const { limit, offset = 0 } = options;
-    const userServiceInteractions = interactions.filter((int) => int.userId === userId && int.serviceId === serviceId);
+    const { limit = LIMIT, offset = 0 } = options;
+    const userServiceInteractions = this.db.interactions.filter(
+      (int) => int.userId === userId && int.serviceId === serviceId
+    );
 
     const entries: Interaction[] = [];
     for (let i = 0; i < limit; i++) {
@@ -193,17 +180,16 @@ class Api {
 
     // depth 0 root -> orgs
     if (selectedNode.data.type === "root") {
-      const { entries: orgs } = await this.fetchOrgs({ limit, offset: this.orgOffset });
+      const { entries: orgs } = await this.fetchOrgs({ offset: this.orgOffset });
       this.orgOffset++;
 
-      const orgProms: Promise<any>[] = orgs.map((org) => this.fetchOrgUsers(org.id, { limit, offset: 0 }));
+      const orgProms: Promise<any>[] = orgs.map((org) => this.fetchOrgUsers(org.id, { offset: 0 }));
       const totalCounts = (await Promise.all(orgProms)).map((entry) => entry.totalCount);
       //   console.log("root", { orgs, totalCounts });
       const orgNodes = orgs.map((org, i) => {
         return { data: { ...org, count: totalCounts[i] } };
       });
       return orgNodes;
-      // treeChart.addNodes(orgNodes);
     }
     // depth 1 org -> users
     if (selectedNode.data.type === "org") {
@@ -211,16 +197,15 @@ class Api {
       if (!this.orgOffsets[orgId]) {
         this.orgOffsets[orgId] = 0;
       }
-      const { entries: users } = await this.fetchOrgUsers(orgId, { limit, offset: this.orgOffsets[orgId] });
+      const { entries: users } = await this.fetchOrgUsers(orgId, { offset: this.orgOffsets[orgId] });
       this.orgOffsets[orgId]++;
 
-      const userProms: Promise<any>[] = users.map((user) => this.fetchUserServices(user.id, { limit, offset: 0 }));
+      const userProms: Promise<any>[] = users.map((user) => this.fetchUserServices(user.id, { offset: 0 }));
       const totalCounts = (await Promise.all(userProms)).map((entry) => entry.totalCount);
 
       //   console.log("org", { users, totalCount });
       const userNodes = users.map((user, i) => ({ data: { ...user, count: totalCounts[i] } }));
       return userNodes;
-      // treeChart.addNodes(userNodes);
     }
     // depth 2 user -> services
     if (selectedNode.data.type === "user") {
@@ -228,14 +213,13 @@ class Api {
       if (!this.userOffsets[userId]) {
         this.userOffsets[userId] = 0;
       }
-      const { entries: services, totalCount } = await this.fetchUserServices(userId, {
-        limit,
+      const { entries: services } = await this.fetchUserServices(userId, {
         offset: this.userOffsets[userId],
       });
       this.userOffsets[userId]++;
 
       const serviceProms: Promise<any>[] = services.map((service) =>
-        this.fetchUserServiceInteractions(userId, service.id, { limit, offset: 0 })
+        this.fetchUserServiceInteractions(userId, service.id, { offset: 0 })
       );
       const totalCounts = (await Promise.all(serviceProms)).map((entry) => entry.totalCount);
 
@@ -243,7 +227,6 @@ class Api {
         data: { ...service, id: `${service.id}::${userId}`, count: totalCounts[i] },
       }));
       return serviceNodes;
-      // treeChart.addNodes(serviceNodes);
     }
     // depth 3 user -> services
     if (selectedNode.data.type === "service") {
@@ -257,7 +240,6 @@ class Api {
       }
 
       const { entries: interactions } = await this.fetchUserServiceInteractions(userId, serviceId, {
-        limit,
         offset: this.interactionOffsets[serviceId][userId],
       });
       this.interactionOffsets[serviceId][userId]++;
@@ -270,7 +252,6 @@ class Api {
         },
       }));
       return interactionNodes;
-      // treeChart.addNodes(interactionNodes);
     }
   }
 }

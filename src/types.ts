@@ -1,3 +1,59 @@
+export interface DataEntry {
+  name: string;
+  id?: string;
+  parentId?: string;
+  value?: number;
+}
+
+export interface Org {
+  id: string;
+  name: string;
+  type: "org";
+  parentId: "root";
+}
+export interface User {
+  id: string;
+  name: string;
+  type: "user";
+  parentId: string;
+}
+export interface Company {
+  id: string;
+  name: string;
+  type: "company";
+  parentId: "root";
+}
+
+export interface ServiceJSON {
+  id: number;
+  imageUrl: string;
+  name: string;
+  category: string;
+  description: string;
+  company: string;
+  release_date: number;
+}
+export interface SimpleService {
+  id: string;
+  name: string;
+  type: "service";
+  parentId: string;
+}
+
+export interface Service extends Omit<ServiceJSON, "id"> {
+  id: string;
+  type: "service";
+  parentId: string;
+}
+
+export interface Interaction {
+  id: string;
+  name: string;
+  type: "interaction";
+  userId: string;
+  serviceId: string;
+}
+
 export type HierarchicalData<T> = T & {
   children?: HierarchicalData<T>[];
 };
@@ -26,4 +82,12 @@ export interface INode {
 export interface ILink {
   source: INode;
   target: INode;
+}
+
+export interface DB {
+  orgs: Org[];
+  users: User[];
+  companies: Company[];
+  services: Service[];
+  interactions: Interaction[];
 }

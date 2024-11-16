@@ -134,21 +134,21 @@ class TreeChart<T> {
       .attr("y", -12);
 
     nodeEnter
+      .append("text")
+      .attr("class", "remaining-text")
+      .attr("x", (d: INode) => this.#getNodeWidth(d) + 6)
+      .attr("y", 3.75)
+      .style("font-size", 14)
+      .style("display", "none");
+
+    nodeEnter
       .append("image")
       .attr("class", "plus-icon")
       .attr("xlink:href", "plus.svg")
       .attr("height", 10)
       .attr("width", 32)
-      .attr("x", (d: INode) => this.#getNodeWidth(d))
+      .attr("x", (d: INode) => this.#getNodeWidth(d) - 16)
       .attr("y", -6)
-      .style("display", "none");
-
-    nodeEnter
-      .append("text")
-      .attr("class", "remaining-text")
-      .attr("x", (d: INode) => this.#getNodeWidth(d))
-      .attr("y", 3.75)
-      .style("font-size", 14)
       .style("display", "none");
 
     /**************************************************/
@@ -174,11 +174,6 @@ class TreeChart<T> {
 
     nodeUpdate.select("text").text((d: INode) => d.data.name);
 
-    nodeUpdate.select(".plus-icon").style("display", (d: INode) => {
-      const remainingChildren = this.#getRemainingChildCount(d);
-      return !this.isLoading && d.id === this.selected?.id && remainingChildren > 0 ? "block" : "none";
-    });
-
     nodeUpdate
       .select(".remaining-text")
       .attr("stroke", "dodgerblue")
@@ -190,6 +185,11 @@ class TreeChart<T> {
         const remainingChildren = this.#getRemainingChildCount(d);
         return !this.isLoading && d.id === this.selected?.id && remainingChildren > 0 ? "block" : "none";
       });
+
+    nodeUpdate.select(".plus-icon").style("display", (d: INode) => {
+      const remainingChildren = this.#getRemainingChildCount(d);
+      return !this.isLoading && d.id === this.selected?.id && remainingChildren > 0 ? "block" : "none";
+    });
 
     // Transition exiting nodes to the parent's new position.
     const nodeExit = node.exit().transition(transition).remove();
