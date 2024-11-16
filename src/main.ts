@@ -1,7 +1,7 @@
 import { data } from "./data";
-import { DATA, H_DATA, STRATIFIED_DATA } from "./api";
+
 import { TreeChart } from "./tree";
-import { Api, DataEntry, Org } from "./api.2";
+import { Api, DataEntry, Org } from "./api";
 import { HierarchicalData } from "./types";
 const limit = 2;
 
@@ -11,8 +11,6 @@ const canvas = document.querySelector("#frame") as HTMLDivElement;
 // const addBtn = document.querySelector("#add-btn") as HTMLButtonElement;
 
 /******/
-
-console.log({ DATA, STRATIFIED_DATA, H_DATA, data });
 
 async function initializeTree() {
   const treeChart = new TreeChart<any>();

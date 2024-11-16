@@ -1,82 +1,278 @@
-import * as d3 from "d3";
-
-export enum EntryType {
-  org = "org",
-  company = "company",
-  user = "user",
-  service = "service",
-  interaction = "interaction",
+async function wait(milliseconds: number) {
+  return new Promise((resolve) => setTimeout(resolve, milliseconds));
 }
 
-const orgs = [
-  { id: "org-1", name: "Genesys", parentId: "root" },
-  { id: "org-2", name: "Acuvity", parentId: "root" },
+export interface DataEntry {
+  name: string;
+  id?: string;
+  parentId?: string;
+  value?: number;
+}
+
+export interface Org {
+  id: string;
+  name: string;
+  type: "org";
+  parentId: "root";
+}
+export interface User {
+  id: string;
+  name: string;
+  type: "user";
+  parentId: string;
+}
+export interface Company {
+  id: string;
+  name: string;
+  type: "company";
+  parentId: "root";
+}
+export interface Service {
+  id: string;
+  name: string;
+  type: "service";
+  parentId: string;
+}
+export interface Interaction {
+  id: string;
+  name: string;
+  type: "interaction";
+  userId: string;
+  serviceId: string;
+}
+
+const orgs: Org[] = [
+  { id: "org-1", type: "org", name: "Genesys", parentId: "root" },
+  { id: "org-2", type: "org", name: "Acuvity", parentId: "root" },
+  { id: "org-3", type: "org", name: "Uber", parentId: "root" },
+  { id: "org-4", type: "org", name: "Twilio", parentId: "root" },
+  { id: "org-5", type: "org", name: "Github", parentId: "root" },
 ];
 
-const users = [
-  { id: "user-1", name: "John", parentId: "org-1" },
-  { id: "user-2", name: "Sarah", parentId: "org-1" },
-  { id: "user-3", name: "Jude", parentId: "org-1" },
-  { id: "user-4", name: "Kate", parentId: "org-2" },
-  { id: "user-5", name: "Aaron", parentId: "org-2" },
+const users: User[] = [
+  { id: "user-1", type: "user", name: "John", parentId: "org-1" },
+  { id: "user-2", type: "user", name: "Sarah", parentId: "org-1" },
+  { id: "user-3", type: "user", name: "Jude", parentId: "org-1" },
+  { id: "user-4", type: "user", name: "Juan", parentId: "org-1" },
+  { id: "user-5", type: "user", name: "Kate", parentId: "org-1" },
+  { id: "user-6", type: "user", name: "Aaron", parentId: "org-2" },
+  { id: "user-7", type: "user", name: "Tina", parentId: "org-2" },
+  { id: "user-8", type: "user", name: "Gordinha", parentId: "org-2" },
+  { id: "user-9", type: "user", name: "Nana", parentId: "org-3" },
+  { id: "user-10", type: "user", name: "Gordo", parentId: "org-4" },
+  { id: "user-11", type: "user", name: "Mulek do nome gigante falano", parentId: "org-4" },
 ];
 
-const companies = [
-  { id: "company-1", name: "Open AI", parentId: "root" },
-  { id: "company-2", name: "Google", parentId: "root" },
-  { id: "company-3", name: "Meta", parentId: "root" },
+const companies: Company[] = [
+  { id: "company-1", type: "company", name: "Open AI", parentId: "root" },
+  { id: "company-2", type: "company", name: "Google", parentId: "root" },
+  { id: "company-3", type: "company", name: "Meta", parentId: "root" },
 ];
 
-const services = [
-  { id: "service-1", name: "ChatGPT", parentId: "company-1" },
-  { id: "service-2", name: "Dall-E", parentId: "company-1" },
-  { id: "service-3", name: "Gemini", parentId: "company-2" },
-  { id: "service-4", name: "Bard", parentId: "company-2" },
-  { id: "service-5", name: "Llama", parentId: "company-3" },
+const services: Service[] = [
+  { id: "service-1", type: "service", name: "ChatGPT", parentId: "company-1" },
+  { id: "service-2", type: "service", name: "Dall-E", parentId: "company-1" },
+  { id: "service-3", type: "service", name: "Gemini", parentId: "company-2" },
+  { id: "service-4", type: "service", name: "Bard", parentId: "company-2" },
+  { id: "service-5", type: "service", name: "Llama", parentId: "company-3" },
 ];
 
-const interactions = [
-  { id: "interaction-1", name: "2024-11-21", userId: "user-1", serviceId: "service-1" },
-  { id: "interaction-2", name: "2024-11-20", userId: "user-1", serviceId: "service-2" },
-  { id: "interaction-3", name: "2024-11-19", userId: "user-1", serviceId: "service-3" },
-  { id: "interaction-4", name: "2024-11-18", userId: "user-1", serviceId: "service-5" },
-  { id: "interaction-5", name: "2024-11-17", userId: "user-2", serviceId: "service-1" },
-  { id: "interaction-6", name: "2024-11-16", userId: "user-2", serviceId: "service-2" },
-  { id: "interaction-7", name: "2024-11-15", userId: "user-3", serviceId: "service-3" },
-  { id: "interaction-8", name: "2024-11-14", userId: "user-3", serviceId: "service-4" },
-  { id: "interaction-9", name: "2024-11-13", userId: "user-3", serviceId: "service-5" },
-  { id: "interaction-10", name: "2024-11-12", userId: "user-4", serviceId: "service-1" },
-  { id: "interaction-11", name: "2024-11-11", userId: "user-4", serviceId: "service-2" },
-  { id: "interaction-12", name: "2024-11-10", userId: "user-4", serviceId: "service-3" },
-  { id: "interaction-13", name: "2024-11-09", userId: "user-4", serviceId: "service-4" },
-  { id: "interaction-14", name: "2024-11-08", userId: "user-4", serviceId: "service-5" },
+const interactions: Interaction[] = [
+  { id: "interaction-0", type: "interaction", name: "2024-11-21", userId: "user-1", serviceId: "service-1" },
+  { id: "interaction-01", type: "interaction", name: "2024-11-21", userId: "user-1", serviceId: "service-1" },
+  { id: "interaction-1", type: "interaction", name: "2024-11-21", userId: "user-1", serviceId: "service-1" },
+  { id: "interaction-2", type: "interaction", name: "2024-11-20", userId: "user-1", serviceId: "service-2" },
+  { id: "interaction-3", type: "interaction", name: "2024-11-19", userId: "user-1", serviceId: "service-3" },
+  { id: "interaction-4", type: "interaction", name: "2024-11-18", userId: "user-1", serviceId: "service-5" },
+  { id: "interaction-5", type: "interaction", name: "2024-11-17", userId: "user-2", serviceId: "service-1" },
+  { id: "interaction-6", type: "interaction", name: "2024-11-16", userId: "user-2", serviceId: "service-2" },
+  { id: "interaction-7", type: "interaction", name: "2024-11-15", userId: "user-3", serviceId: "service-3" },
+  { id: "interaction-8", type: "interaction", name: "2024-11-14", userId: "user-3", serviceId: "service-4" },
+  { id: "interaction-9", type: "interaction", name: "2024-11-13", userId: "user-3", serviceId: "service-5" },
+  { id: "interaction-10", type: "interaction", name: "2024-11-12", userId: "user-4", serviceId: "service-1" },
+  { id: "interaction-11", type: "interaction", name: "2024-11-11", userId: "user-4", serviceId: "service-2" },
+  { id: "interaction-12", type: "interaction", name: "2024-11-10", userId: "user-4", serviceId: "service-3" },
+  { id: "interaction-13", type: "interaction", name: "2024-11-09", userId: "user-4", serviceId: "service-4" },
+  { id: "interaction-14", type: "interaction", name: "2024-11-08", userId: "user-4", serviceId: "service-5" },
+  { id: "interaction-15", type: "interaction", name: "2024-11-08", userId: "user-11", serviceId: "service-1" },
+  { id: "interaction-16", type: "interaction", name: "2024-11-08", userId: "user-11", serviceId: "service-1" },
+  { id: "interaction-17", type: "interaction", name: "2024-11-08", userId: "user-11", serviceId: "service-1" },
+  { id: "interaction-18", type: "interaction", name: "2024-11-08", userId: "user-11", serviceId: "service-1" },
+  { id: "interaction-19", type: "interaction", name: "2024-11-08", userId: "user-11", serviceId: "service-1" },
+  { id: "interaction-20", type: "interaction", name: "2024-11-08", userId: "user-11", serviceId: "service-1" },
+  { id: "interaction-21", type: "interaction", name: "2024-11-08", userId: "user-11", serviceId: "service-1" },
+  { id: "interaction-22", type: "interaction", name: "2024-11-08", userId: "user-11", serviceId: "service-1" },
 ];
 
-const DATA = [
-  //   { id: "root", name: "root", parentId: null },
-  ...orgs,
-  ...companies,
-  ...users,
-  ...services,
-  ...interactions,
-];
+type Opts = {
+  limit: number;
+  offset: number;
+};
 
-const groupData = d3.group(DATA, (d: any) => d.parentId);
-const groupData2 = d3.groups(DATA, (d: any) => d.parentId);
+const limit = 2;
 
-console.log({ groupData, groupData2 });
+class Api {
+  orgOffset = 0;
+  orgOffsets: { [k: string]: number } = {};
+  userOffsets: { [k: string]: number } = {};
+  interactionOffsets: { [k: string]: { [k: string]: number } } = {};
 
-const STRATIFIED_DATA = undefined;
-// const STRATIFIED_DATA = d3
-//   .stratify()
-//   .id((d: any) => d.id)
-//   .parentId((d: any) => d?.parentId || d?.userId || null)(DATA);
-// const H_DATA = d3.hierarchy(STRATIFIED_DATA);
-const H_DATA = d3.hierarchy(groupData);
+  async fetchOrgs(options: Opts) {
+    const { limit, offset = 0 } = options;
+    // console.log("fetchOrgs", options);
 
-// function getChildData(parentId: string, limit: number, offset: number) {
-//   const parent = DATA.find((entry) => entry.id === parentId);
-//   console.log("getChildData", { parent, parentId, limit, offset });
-// }
+    const entries: Org[] = [];
+    for (let i = 0; i < limit; i++) {
+      const idx = limit * offset + i;
+      const org = orgs[idx];
+      if (org) {
+        entries.push(org);
+      }
+    }
+    await wait(200);
+    return { entries, totalCount: orgs.length };
+  }
+  async fetchOrgUsers(orgId: string, options: Opts) {
+    const { limit, offset = 0 } = options;
+    const orgUsers = users.filter((u) => u.parentId === orgId);
+    // console.log("fetchOrgUsers", { orgId, options, orgUsers });
+    const entries: User[] = [];
+    for (let i = 0; i < limit; i++) {
+      const idx = limit * offset + i;
+      const user = orgUsers[idx];
+      if (user) {
+        entries.push(user);
+      }
+    }
+    await wait(200);
+    return { entries, totalCount: orgUsers.length };
+  }
+  async fetchUserServices(userId: string, options: Opts) {
+    const { limit, offset = 0 } = options;
+    const userInteractions = interactions.filter((s) => s.userId === userId);
+    const serviceIds = [...new Set(userInteractions.map((int) => int.serviceId))];
+    // console.log("fetchUserServices", { userId, options, userInteractions });
+    const entries: Service[] = [];
+    for (let i = 0; i < limit; i++) {
+      const idx = limit * offset + i;
+      const serviceId = serviceIds[idx];
+      const service = services.find((s) => s.id === serviceId);
+      if (service) {
+        entries.push(service);
+      }
+    }
+    await wait(200);
+    return { entries, totalCount: serviceIds.length };
+  }
+  async fetchUserServiceInteractions(userId: string, serviceId: string, options: Opts) {
+    const { limit, offset = 0 } = options;
+    const userServiceInteractions = interactions.filter((int) => int.userId === userId && int.serviceId === serviceId);
 
-export { DATA, STRATIFIED_DATA, H_DATA };
+    const entries: Interaction[] = [];
+    for (let i = 0; i < limit; i++) {
+      const idx = limit * offset + i;
+      const interaction = userServiceInteractions[idx];
+      if (interaction) {
+        entries.push(interaction);
+      }
+    }
+    // console.log("::: fetchUserServiceInteractions", { userId, serviceId, userServiceInteractions, entries });
+    await wait(200);
+    return { entries, totalCount: userServiceInteractions.length };
+  }
+  //
+  // async fetchCompanies
+  // async fetchCompanyServices
+  // async fetchServiceUsers
+  // async fetchServiceUserInteractions
+
+  async fetchNodes(selectedNode: any) {
+    if (!selectedNode) return;
+
+    // console.log("fetch btn onClick -->", { selectedNode });
+
+    // depth 0 root -> orgs
+    if (selectedNode.data.type === "root") {
+      const { entries: orgs } = await this.fetchOrgs({ limit, offset: this.orgOffset });
+      this.orgOffset++;
+
+      const orgProms: Promise<any>[] = orgs.map((org) => this.fetchOrgUsers(org.id, { limit, offset: 0 }));
+      const totalCounts = (await Promise.all(orgProms)).map((entry) => entry.totalCount);
+      //   console.log("root", { orgs, totalCounts });
+      const orgNodes = orgs.map((org, i) => {
+        return { data: { ...org, count: totalCounts[i] } };
+      });
+      return orgNodes;
+      // treeChart.addNodes(orgNodes);
+    }
+    // depth 1 org -> users
+    if (selectedNode.data.type === "org") {
+      const orgId = selectedNode.data.id;
+      if (!this.orgOffsets[orgId]) {
+        this.orgOffsets[orgId] = 0;
+      }
+      const { entries: users } = await this.fetchOrgUsers(orgId, { limit, offset: this.orgOffsets[orgId] });
+      this.orgOffsets[orgId]++;
+
+      const userProms: Promise<any>[] = users.map((user) => this.fetchUserServices(user.id, { limit, offset: 0 }));
+      const totalCounts = (await Promise.all(userProms)).map((entry) => entry.totalCount);
+
+      //   console.log("org", { users, totalCount });
+      const userNodes = users.map((user, i) => ({ data: { ...user, count: totalCounts[i] } }));
+      return userNodes;
+      // treeChart.addNodes(userNodes);
+    }
+    // depth 2 user -> services
+    if (selectedNode.data.type === "user") {
+      const userId = selectedNode.data.id;
+      if (!this.userOffsets[userId]) {
+        this.userOffsets[userId] = 0;
+      }
+      const { entries: services, totalCount } = await this.fetchUserServices(userId, {
+        limit,
+        offset: this.userOffsets[userId],
+      });
+      this.userOffsets[userId]++;
+
+      const serviceProms: Promise<any>[] = services.map((service) =>
+        this.fetchUserServiceInteractions(userId, service.id, { limit, offset: 0 })
+      );
+      const totalCounts = (await Promise.all(serviceProms)).map((entry) => entry.totalCount);
+
+      const serviceNodes = services.map((service, i) => ({
+        data: { ...service, id: `${service.id}::${userId}`, count: totalCounts[i] },
+      }));
+      return serviceNodes;
+      // treeChart.addNodes(serviceNodes);
+    }
+    // depth 3 user -> services
+    if (selectedNode.data.type === "service") {
+      const [serviceId, userId] = selectedNode.data.id.split("::");
+
+      if (!this.interactionOffsets[serviceId]) {
+        this.interactionOffsets[serviceId] = {};
+      }
+      if (!this.interactionOffsets[serviceId][userId]) {
+        this.interactionOffsets[serviceId][userId] = 0;
+      }
+
+      const { entries: interactions } = await this.fetchUserServiceInteractions(userId, serviceId, {
+        limit,
+        offset: this.interactionOffsets[serviceId][userId],
+      });
+      this.interactionOffsets[serviceId][userId]++;
+
+      const interactionNodes = interactions.map((interaction) => ({
+        data: {
+          ...interaction,
+          id: `${interaction.id}::${serviceId}::${userId}`,
+          count: 0,
+        },
+      }));
+      return interactionNodes;
+      // treeChart.addNodes(interactionNodes);
+    }
+  }
+}
+
+export { Api };
