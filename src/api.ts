@@ -1,5 +1,5 @@
 import { faker } from "@faker-js/faker";
-import { Org, User, Company, Service, Interaction, DB, ServiceJSON } from "./types";
+import { Org, User, Company, Service, Interaction, DB, ServiceJSON, Prompt } from "./types";
 import { getRandomInt } from "./helperFns";
 // @ts-ignore
 import servicesList from "/src/services.json";
@@ -42,15 +42,16 @@ class Api {
         parentId: "root",
       });
     }
-    const userCount = orgCount * 50;
+    const userCount = orgCount * 24;
     for (let i = 0; i < userCount; i++) {
       const parentId = `org-${getRandomInt(1, db.orgs.length)}`;
       db.users.push({
         id: `user-${i + 1}`,
-        name: faker.person.fullName(),
+        name: `${faker.person.firstName()} ${faker.person.lastName()}`,
+        position: faker.person.jobTitle(),
         imageUrl: faker.image.avatar(),
-        // imageUrl: faker.image.avatarGitHub(),
-        // imageUrl: faker.image.avatarGitHub(),
+        favoriteFood: faker.food.dish(),
+        zodiacSign: faker.person.zodiacSign(),
         type: "user",
         parentId,
       });
@@ -84,7 +85,7 @@ class Api {
 
     let interactionIdx = 1;
     for (const user of db.users) {
-      const serviceCount = getRandomInt(0, 16);
+      const serviceCount = getRandomInt(0, 12);
       const userServiceIdsSet = new Set<string>();
 
       while (userServiceIdsSet.size < serviceCount) {
@@ -99,14 +100,30 @@ class Api {
       const interactions: Interaction[] = [];
       while (interactions.length < interactionCount) {
         const serviceId = userServiceIds[getRandomInt(0, userServiceIds.length - 1)];
+        const interactionDate = faker.date.between({
+          from: new Date().getTime() - 180 * 24 * 60 * 60 * 1000,
+          to: new Date(),
+        });
+        const prompts: Prompt[] = [];
+        const promptCount = getRandomInt(1, 6);
+        let interval = getRandomInt(6000, 60_000);
+        for (let i = 0; i < promptCount; i++) {
+          const prompt = {
+            input: faker.lorem.lines({ min: 1, max: 2 }),
+            output: faker.lorem.lines({ min: 2, max: 6 }),
+            timestamp: new Date(interactionDate.getTime() + interval),
+          };
+          interval += getRandomInt(6000, 60_000);
+          prompts.push(prompt);
+        }
+
         interactions.push({
           id: `interaction-${interactionIdx}`,
           type: "interaction",
-          name: faker.date
-            .between({ from: new Date().getTime() - 180 * 24 * 60 * 60 * 1000, to: new Date() })
-            .toLocaleString("en"),
+          name: interactionDate.toLocaleString("en"),
           userId: user.id,
           serviceId,
+          prompts,
         });
         interactionIdx++;
       }

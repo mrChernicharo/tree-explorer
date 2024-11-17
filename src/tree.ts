@@ -2,7 +2,8 @@ import * as d3 from "d3";
 import { HierarchicalData, ILink, INode } from "./types";
 import { api } from "./api";
 
-const COLORS = ["red", "orangered", "#ff6600", "orange", "goldenrod"];
+const COLORS = ["#0b9d85", "#0b9d85", "#232bff", "#772dff"];
+const headerHeight = 82;
 
 class TreeChart<T> {
   root!: d3.HierarchyNode<any> & INode;
@@ -15,7 +16,7 @@ class TreeChart<T> {
   isLoading = false;
 
   width = window.innerWidth;
-  maxHeight = window.innerHeight - 200;
+  maxHeight = window.innerHeight - headerHeight;
   marginTop = 10;
   marginRight = 10;
   marginBottom = 10;
@@ -42,8 +43,8 @@ class TreeChart<T> {
       .attr("width", this.width)
       .attr("height", this.dx)
       .attr("viewBox", [-this.marginLeft, -this.marginTop, this.width, this.dx])
-      .attr("style", `max-width: calc(100% - 2px); height: ${this.maxHeight}; font: 10px monospace; user-select: none;`)
-      .on("wheel", this.#onWheel.bind(this));
+      .attr("style", `max-width: 100%; height: ${this.maxHeight}px; font: 10px monospace; user-select: none;`)
+      .on("wheel", this.#onWheel.bind(this), false);
 
     this.gLink = this.svg
       .append("g")
@@ -123,7 +124,7 @@ class TreeChart<T> {
       .attr("dy", "0.32em")
       .text((d: INode) => {
         const remainingChildren = this.#getRemainingChildCount(d);
-        return remainingChildren > 0 ? `${d.data.name} ${remainingChildren}` : d.data.name;
+        return remainingChildren > 0 ? `${d.data.name} +${remainingChildren}` : d.data.name;
       })
       .attr("stroke", "white");
     // .attr("stroke-linejoin", "round")
@@ -180,7 +181,7 @@ class TreeChart<T> {
 
     nodeUpdate.select("text").text((d: INode) => {
       const remainingChildren = this.#getRemainingChildCount(d);
-      return d.id == this.selected?.id || remainingChildren == 0 ? d.data.name : `${d.data.name} ${remainingChildren}`;
+      return d.id == this.selected?.id || remainingChildren == 0 ? d.data.name : `${d.data.name} +${remainingChildren}`;
     });
 
     nodeUpdate
@@ -254,15 +255,15 @@ class TreeChart<T> {
 
   #onWheel(event: WheelEvent) {
     const { x, y, deltaY } = event;
-    // console.log({ event, x, y, deltaY, vb: this.svg.attr("viewBox") });
+    console.log({ event, deltaY });
     let [x1, y1, x2, y2] = this.svg
       .attr("viewBox")
       .split(",")
       .map((v: string) => Number(v));
 
     this.svg
-      .transition()
-      .duration(320)
+      // .transition()
+      // .duration(320)
       .attr("viewBox", [x1, (y1 += deltaY * this.deltaScroll), x2, y2].join());
   }
 

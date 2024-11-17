@@ -6,114 +6,7 @@
     <link rel="icon" type="image/svg" href="/src/typescript.svg" />
     <title>Tree Navigator</title>
 
-    <style>
-      * {
-        margin: 0;
-      }
-      html {
-        height: 100%;
-      }
-      body {
-        font-family: system-ui, sans-serif;
-        min-height: 100%;
-        background-color: #202020;
-      }
-
-      header {
-        font-size: 20px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding-inline: 8px;
-        height: 80px;
-        background-color: white;
-      }
-
-      section {
-        /* border: 1px solid; */
-        display: flex;
-      }
-
-      section.top {
-        display: flex;
-        flex-direction: row;
-        min-height: 600px;
-        background-color: blue;
-        color: white;
-      }
-
-      section.top .left {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        padding: 50px;
-        padding-right: 0px;
-        gap: 16px;
-        width: 50vw;
-        /* border: 1px solid; */
-      }
-
-      section.top .left h1 {
-        font-size: 46px;
-        /* border: 1px solid; */
-      }
-      section.top .left p {
-        max-width: 350px;
-        text-align: right;
-        /* border: 1px solid; */
-      }
-
-      section.top .right {
-        padding: 50px;
-        padding-left: 0px;
-        width: 50vw;
-        /* max-height: 400px; */
-        /* border: 1px solid; */
-      }
-
-      section.bottom {
-        justify-content: center;
-        padding-block: 80px;
-      }
-
-      .cta-button {
-        text-decoration: none;
-        background-color: blue;
-        color: white;
-        font-size: 22px;
-        font-weight: bold;
-        border-radius: 1000px;
-        padding: 12px 24px;
-        cursor: pointer;
-        border: none;
-      }
-
-      .cta-button:hover {
-        opacity: 0.75;
-      }
-
-      @media screen and (max-width: 1000px) {
-        section.top {
-          flex-direction: column;
-        }
-        section.top .left {
-          width: 100vw;
-          text-align: center;
-          padding: 24px 0px;
-        }
-        section.top .left p {
-          text-align: left;
-        }
-        section.top .right {
-          width: 100vw;
-        }
-        dotlottie-player {
-          max-width: 400px;
-          margin: 0 auto;
-        }
-      }
-    </style>
+    <link rel="stylesheet" href="/src/style.css" />
   </head>
   <body>
     <header>
@@ -123,16 +16,12 @@
 
     <section class="top">
       <div class="left">
-        <h1>Activity Analyzer</h1>
+        <h1>Understand how AI is being used by people across organizations</h1>
 
         <p>
-          Keep track of what info people in your organization have been sharing with AI services at all times. Analyze
-          all activities across multiple orgs.
-        </p>
-
-        <p>
-          Gain complete visibility into how your organization is using AI tools. Track user interactions, analyze
-          historical data, and customize dashboards to suit your needs.
+          Gain complete visibility into how your organization is using AI tools with our super intuitive
+          <span>Activity Analyzer</span>. Track user interactions, analyze historical data, and customize dashboards to
+          suit your needs.
         </p>
       </div>
 

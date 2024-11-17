@@ -1,84 +1,156 @@
 import { api } from "./api";
 import { TreeChart } from "./tree";
-import { INode } from "./types";
+import { INode, Prompt } from "./types";
 
 const canvas = document.querySelector("#frame") as HTMLDivElement;
 const details = document.querySelector("#details-view") as HTMLDivElement;
-const detailsText = document.querySelector("#details-view #details") as HTMLDivElement;
-const detailsBackArrow = document.querySelector("#details-view #back-arrow") as HTMLDivElement;
 const breadcrumbs = document.querySelector("#breadcrumbs") as HTMLDivElement;
+
+const detailsBackArrow = document.querySelector("#details-view #back-arrow") as HTMLDivElement;
+const orgDetails = document.querySelector("#details-view #org-details") as HTMLDivElement;
+const userDetails = document.querySelector("#details-view #user-details") as HTMLDivElement;
+const serviceDetails = document.querySelector("#details-view #service-details") as HTMLDivElement;
+const interactionDetails = document.querySelector("#details-view #interaction-details") as HTMLDivElement;
+
 // const toggleBtn = document.querySelector("#toggle-btn") as HTMLButtonElement;
 // const fetchBtn = document.querySelector("#fetch-btn") as HTMLButtonElement;
 // const addBtn = document.querySelector("#add-btn") as HTMLButtonElement;
 let selectedNode: INode | null = null;
+const currNodeChain: Record<string, INode | null> = {
+  org: null,
+  user: null,
+  service: null,
+  interaction: null,
+};
 
 /******/
 
 async function initializeTree() {
-  const treeChart = new TreeChart<{ name: string; type: string; count: number; children: INode[] }>();
+  const treeChart = new TreeChart<{ name: string; type: string; count: number; imageUrl: string; children: INode[] }>();
   const { totalCount: orgCount } = await api.fetchOrgs({ offset: 0 });
-  const rootNode = { name: "Orgs", type: "root", children: [], count: orgCount };
+  const rootNode = { name: "Orgs", type: "root", children: [], count: orgCount, imageUrl: "" };
   return treeChart.initTree(rootNode);
 }
-
-window.addEventListener("tree-updated", onTreeUpdate);
-detailsBackArrow.onclick = () => {
-  details.style.display = "none";
-  canvas.style.display = "block";
-};
 
 function onTreeUpdate(event: Event) {
   const ev = event as Event & { detail: { selectedNode: INode | null } };
   if (!ev.detail.selectedNode) return;
 
   selectedNode = ev.detail.selectedNode;
-  const nodePath = getNodePathStr(selectedNode);
+
+  switch (selectedNode.data.type) {
+    case "org":
+      currNodeChain.org = selectedNode;
+      currNodeChain.user = null;
+      currNodeChain.service = null;
+      currNodeChain.interaction = null;
+      break;
+    case "user":
+      currNodeChain.org = selectedNode.parent;
+      currNodeChain.user = selectedNode;
+      currNodeChain.service = null;
+      currNodeChain.interaction = null;
+      break;
+    case "service":
+      currNodeChain.org = selectedNode.parent!.parent;
+      currNodeChain.user = selectedNode.parent;
+      currNodeChain.service = selectedNode;
+      currNodeChain.interaction = null;
+      break;
+    case "interaction":
+      currNodeChain.org = selectedNode.parent!.parent!.parent;
+      currNodeChain.user = selectedNode.parent!.parent;
+      currNodeChain.service = selectedNode.parent;
+      currNodeChain.interaction = selectedNode;
+      break;
+    default:
+      break;
+  }
+
+  const nodeChain = [currNodeChain.org, currNodeChain.user, currNodeChain.service, currNodeChain.interaction].filter(
+    Boolean
+  ) as INode[];
+
+  console.log({ selectedNode, currNodeChain, nodeChain });
 
   breadcrumbs.innerHTML = "";
-  createBreadcrumbLinks(nodePath).forEach((anchor, i) => {
+  nodeChain.forEach((node, i) => {
+    const anchorEl = document.createElement("a");
+    anchorEl.dataset["id"] = node.data.id;
+    anchorEl.dataset["name"] = node.data.name;
+    anchorEl.dataset["type"] = node.data.type;
+    anchorEl.textContent = node.data.name;
+    anchorEl.href = "#";
+    anchorEl.onclick = () => {
+      openDetailsView(node.data.type);
+    };
     if (i > 0) breadcrumbs.append(" > ");
-    breadcrumbs.appendChild(anchor);
+    breadcrumbs.appendChild(anchorEl);
   });
-  // breadcrumbs.textContent = nodePath;
 }
 
-function createBreadcrumbLinks(path: string) {
-  const pathSegments = path
-    .split(">")
-    .map((str) => str.trim())
-    .filter(Boolean);
+function openDetailsView(linkType: string) {
+  canvas.style.display = "none";
+  details.style.display = "block";
 
-  return pathSegments.map((pathStr) => {
-    const anchorEl = document.createElement("a");
-    anchorEl.dataset["name"] = pathStr;
+  if (currNodeChain.org) {
+    orgDetails.innerHTML = `
+    <div>
+      <img src="${currNodeChain.org.data.imageUrl}" />
+      <h3>${currNodeChain.org.data.name}</h3>
+    </div>
+    `;
+  } else {
+    orgDetails.innerHTML = "";
+  }
 
-    let node = selectedNode;
-    while (node?.parent) {
-      if (node.data.name === pathStr) {
-        anchorEl.dataset["id"] = node.data.id;
-        anchorEl.dataset["type"] = node.data.type;
-      }
-      node = node.parent;
-    }
+  if (currNodeChain.user && linkType !== "org") {
+    userDetails.innerHTML = `
+    <div>
+      <img src="${currNodeChain.user.data.imageUrl}" />
+      <h3>${currNodeChain.user.data.name}</h3>
+    </div>
+    `;
+  } else {
+    userDetails.innerHTML = "";
+  }
 
-    anchorEl.onclick = () => {
-      canvas.style.display = "none";
-      details.style.display = "block";
-      // detailsText.textContent = anchorEl.dataset["id"] + " | " + anchorEl.dataset["name"];
-      const id = parseEntryId(anchorEl.dataset["type"]!, anchorEl.dataset["id"]!);
-      const entry = api.getEntry(anchorEl.dataset["type"]!, id) as any;
-      console.log(entry);
-      detailsText.innerHTML = `<div>
-        <div>${entry?.id}</div>
-        <div>${entry?.name}</div>
-        <div>${entry?.type}</div>
-        ${entry.imageUrl ? `<img src="${entry.imageUrl}" height="160px" />` : ""}
-      </div>`;
-    };
-    anchorEl.textContent = pathStr;
-    anchorEl.href = "#";
-    return anchorEl;
-  });
+  if (currNodeChain.service && !["org", "user"].includes(linkType)) {
+    serviceDetails.innerHTML = `
+    <div>
+      <img src="${currNodeChain.service.data.imageUrl}" />
+      <h3>${currNodeChain.service.data.name}</h3>
+    </div>
+    `;
+  } else {
+    serviceDetails.innerHTML = "";
+  }
+
+  if (currNodeChain.interaction && !["org", "user", "service"].includes(linkType)) {
+    const promptList = `<ul class="prompt-list"> ${(currNodeChain.interaction.data?.prompts || [])
+      .map(
+        (prompt: Prompt) => `
+                <li class="timestamp">${prompt.timestamp.toLocaleString("en")}</li>
+                <li class="input">${prompt.input}</li>
+                <li class="output">${prompt.output}</li>
+                `
+      )
+      .join(" ")} </ul>`;
+
+    interactionDetails.innerHTML = `
+    <div>
+      <h3>${currNodeChain.interaction.data.name}</h3>
+      ${promptList}
+    </div>
+    `;
+  } else {
+    interactionDetails.innerHTML = "";
+  }
+}
+
+function openMainView() {
+  details.style.display = "none";
+  canvas.style.display = "block";
 }
 
 function parseEntryId(type: string, idStr: string) {
@@ -96,12 +168,8 @@ function parseEntryId(type: string, idStr: string) {
   }
 }
 
-function getNodePathStr(node: INode): string {
-  if (!node.parent) return "";
-  return getNodePathStr(node.parent).length > 0
-    ? getNodePathStr(node.parent) + `> ${node.data.name} `
-    : ` ${node.data.name} `;
-}
-
 const { svg } = await initializeTree();
 canvas.appendChild(svg);
+
+window.addEventListener("tree-updated", onTreeUpdate);
+detailsBackArrow.onclick = openMainView;

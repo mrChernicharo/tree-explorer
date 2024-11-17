@@ -5,38 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg" href="/src/typescript.svg" />
     <title>Tree Navigator</title>
-    <style>
-      * {
-        margin: 0;
-      }
-      html {
-        height: 100%;
-      }
-      body {
-        font-family: system-ui, sans-serif;
-        background-color: #ccc;
-        min-height: 100%;
-      }
-      svg {
-        background-color: #ffffff;
-      }
-      #details-view {
-        display: none;
-      }
-      #breadcrumbs {
-        height: 24px;
-      }
-    </style>
+
+    <link rel="stylesheet" href="/src/style.css" />
   </head>
-  <body>
-    <h1>Hello D3</h1>
-    <div id="breadcrumbs"></div>
+  <body class="app">
+    <header style="border-bottom: 1px solid #cdcdcd">
+      <a href="index.html"><img src="/src/bird-logo.png" width="64" height="64" alt="" /></a>
+      <span>Data Explorer</span>
+      <div id="breadcrumbs"></div>
+    </header>
 
     <div id="details-view">
       <button id="back-arrow">
         <img src="back.svg" alt="" />
       </button>
-      <div id="details"></div>
+
+      <div id="org-details"></div>
+      <div id="user-details"></div>
+      <div id="service-details"></div>
+      <div id="interaction-details"></div>
     </div>
 
     <div id="frame"></div>

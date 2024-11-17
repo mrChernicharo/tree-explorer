@@ -16,6 +16,9 @@ export interface User {
   id: string;
   name: string;
   imageUrl: string;
+  position: string;
+  favoriteFood: string;
+  zodiacSign: string;
   type: "user";
   parentId: string;
 }
@@ -43,12 +46,19 @@ export interface Service extends Omit<ServiceJSON, "id"> {
   parentId: string;
 }
 
+export interface Prompt {
+  input: string;
+  output: string;
+  timestamp: Date;
+}
+
 export interface Interaction {
   id: string;
   name: string;
   type: "interaction";
   userId: string;
   serviceId: string;
+  prompts: Prompt[];
 }
 
 export type HierarchicalData<T> = T & {
@@ -58,9 +68,21 @@ export type HierarchicalData<T> = T & {
 export interface INodeData {
   id: string;
   name: string;
+  imageUrl: string;
   type: string;
   count: number;
   children: INodeData[];
+  // user
+  position?: string;
+  favoriteFood?: string;
+  zodiacSign?: string;
+  // service
+  category?: string;
+  description?: string;
+  company?: string;
+  release_date?: number;
+  // interaction
+  prompts?: Prompt[];
 }
 
 export interface INode {
