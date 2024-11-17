@@ -1,7 +1,7 @@
 [
   {
     "id": 1,
-    "imageUrl": "https://picsum.photos/seed/SIzSebe/120/80?grayscale",
+    "imageUrl": "https://picsum.photos/seed/SIzSebe/320/180?",
     "company": "OpenAI",
     "name": "GPT-3",
     "category": "Language Model",
@@ -10,7 +10,7 @@
   },
   {
     "id": 2,
-    "imageUrl": "https://picsum.photos/seed/nY3cj8kWMQ/120/80?grayscale&blur=4",
+    "imageUrl": "https://picsum.photos/seed/nY3cj8kWMQ/320/180?",
     "company": "OpenAI",
     "name": "DALL-E 2",
     "category": "Image Generation",
@@ -19,7 +19,7 @@
   },
   {
     "id": 3,
-    "imageUrl": "https://picsum.photos/seed/ZgQzD/120/80?grayscale",
+    "imageUrl": "https://picsum.photos/seed/ZgQzD/320/180?",
     "company": "OpenAI",
     "name": "Codex",
     "category": "Code Generation",
@@ -28,7 +28,7 @@
   },
   {
     "id": 4,
-    "imageUrl": "https://picsum.photos/seed/SpTOSbAN/120/80?blur=9",
+    "imageUrl": "https://picsum.photos/seed/SpTOSbAN/320/180",
     "company": "Google AI",
     "name": "LaMDA",
     "category": "Language Model",
@@ -37,7 +37,7 @@
   },
   {
     "id": 5,
-    "imageUrl": "https://picsum.photos/seed/WhbLM/120/80?grayscale&blur=2",
+    "imageUrl": "https://picsum.photos/seed/WhbLM/320/180",
     "company": "Google AI",
     "name": "Imagen",
     "category": "Image Generation",
@@ -46,7 +46,7 @@
   },
   {
     "id": 6,
-    "imageUrl": "https://picsum.photos/seed/a6fTo3fe/120/80?blur=5",
+    "imageUrl": "https://picsum.photos/seed/a6fTo3fe/320/180",
     "company": "Google AI",
     "name": "PaLM",
     "category": "Language Model",
@@ -55,7 +55,7 @@
   },
   {
     "id": 7,
-    "imageUrl": "https://picsum.photos/seed/gdYqxlo/120/80?blur=9",
+    "imageUrl": "https://picsum.photos/seed/gdYqxlo/320/180",
     "company": "Microsoft Azure AI",
     "name": "Azure Cognitive Services",
     "category": "AI Services Suite",
@@ -64,7 +64,7 @@
   },
   {
     "id": 8,
-    "imageUrl": "https://picsum.photos/seed/RvmBN/120/80?grayscale&blur=9",
+    "imageUrl": "https://picsum.photos/seed/RvmBN/320/180?",
     "company": "Microsoft Azure AI",
     "name": "Azure Machine Learning",
     "category": "Machine Learning Platform",
@@ -73,7 +73,7 @@
   },
   {
     "id": 9,
-    "imageUrl": "https://picsum.photos/seed/PAleeec/120/80?grayscale&blur=3",
+    "imageUrl": "https://picsum.photos/seed/PAleeec/320/180?",
     "company": "Amazon Web Services (AWS)",
     "name": "Amazon SageMaker",
     "category": "Machine Learning Platform",
@@ -82,7 +82,7 @@
   },
   {
     "id": 10,
-    "imageUrl": "https://picsum.photos/seed/aCrco3tJF/120/80?grayscale&blur=7",
+    "imageUrl": "https://picsum.photos/seed/aCrco3tJF/320/180?",
     "company": "Amazon Web Services (AWS)",
     "name": "Amazon Rekognition",
     "category": "Image and Video Analysis",
@@ -91,7 +91,7 @@
   },
   {
     "id": 11,
-    "imageUrl": "https://picsum.photos/seed/FYIrDUJa/120/80?blur=10",
+    "imageUrl": "https://picsum.photos/seed/FYIrDUJa/320/1800",
     "company": "Amazon Web Services (AWS)",
     "name": "Amazon Polly",
     "category": "Text-to-Speech",
@@ -100,7 +100,7 @@
   },
   {
     "id": 12,
-    "imageUrl": "https://picsum.photos/seed/d2Od6g5c/120/80?grayscale&blur=4",
+    "imageUrl": "https://picsum.photos/seed/d2Od6g5c/320/180?",
     "name": "Hugging Face",
     "category": "Machine Learning Platform",
     "description": "Platform for building, training, and deploying machine learning models.",
@@ -109,7 +109,7 @@
   },
   {
     "id": 13,
-    "imageUrl": "https://picsum.photos/seed/JKDlx2P9/120/80?grayscale&blur=7",
+    "imageUrl": "https://picsum.photos/seed/JKDlx2P9/320/180?",
     "company": "Hugging Face",
     "name": "Transformers",
     "category": "Library",
@@ -118,7 +118,7 @@
   },
   {
     "id": 14,
-    "imageUrl": "https://picsum.photos/seed/5RpClSf/120/80?blur=2",
+    "imageUrl": "https://picsum.photos/seed/5RpClSf/320/180",
     "company": "Hugging Face",
     "name": "Datasets",
     "category": "Dataset Hub",
@@ -127,7 +127,7 @@
   },
   {
     "id": 15,
-    "imageUrl": "https://picsum.photos/seed/oZiXxcIN5M/120/80",
+    "imageUrl": "https://picsum.photos/seed/oZiXxcIN5M/320/180",
     "company": "Hugging Face",
     "name": "Model Hub",
     "category": "Model Hub",
@@ -136,7 +136,7 @@
   },
   {
     "id": 16,
-    "imageUrl": "https://picsum.photos/seed/3F4boDaHQ/120/80?grayscale&blur=5",
+    "imageUrl": "https://picsum.photos/seed/3F4boDaHQ/320/180?",
     "company": "Babylon Health",
     "name": "Babylon Health App",
     "category": "Healthcare",
@@ -145,7 +145,7 @@
   },
   {
     "id": 17,
-    "imageUrl": "https://picsum.photos/seed/BtD94jw/120/80?blur=9",
+    "imageUrl": "https://picsum.photos/seed/BtD94jw/320/180",
     "company": "DeepMind Health",
     "name": "AlphaFold",
     "category": "Healthcare",
@@ -154,7 +154,7 @@
   },
   {
     "id": 18,
-    "imageUrl": "https://picsum.photos/seed/ovXUQ6Z/120/80?grayscale&blur=9",
+    "imageUrl": "https://picsum.photos/seed/ovXUQ6Z/320/180?",
     "company": "Alpaca",
     "name": "Alpaca Trading Platform",
     "category": "Finance",
@@ -163,7 +163,7 @@
   },
   {
     "id": 19,
-    "imageUrl": "https://picsum.photos/seed/AqxVEOc3/120/80?blur=5",
+    "imageUrl": "https://picsum.photos/seed/AqxVEOc3/320/180",
     "company": "ZestFinance",
     "name": "Zest AI Platform",
     "category": "Finance",
@@ -172,7 +172,7 @@
   },
   {
     "id": 20,
-    "imageUrl": "https://picsum.photos/seed/IFKtLwlQv6/120/80?blur=3",
+    "imageUrl": "https://picsum.photos/seed/IFKtLwlQv6/320/180",
     "company": "OpenAI",
     "name": "ChatGPT",
     "category": "Language Model",
@@ -181,7 +181,7 @@
   },
   {
     "id": 21,
-    "imageUrl": "https://picsum.photos/seed/5ULBO06/120/80?grayscale&blur=1",
+    "imageUrl": "https://picsum.photos/seed/5ULBO06/320/180?",
     "company": "Google AI",
     "name": "Bard",
     "category": "Language Model",
@@ -190,7 +190,7 @@
   },
   {
     "id": 22,
-    "imageUrl": "https://picsum.photos/seed/rDbF6/120/80?grayscale&blur=5",
+    "imageUrl": "https://picsum.photos/seed/rDbF6/320/180?",
     "company": "Meta",
     "name": "LLaMA",
     "category": "Language Model",
@@ -199,7 +199,7 @@
   },
   {
     "id": 23,
-    "imageUrl": "https://picsum.photos/seed/QC7Nv/120/80?blur=5",
+    "imageUrl": "https://picsum.photos/seed/QC7Nv/320/180",
     "company": "Anthropic",
     "name": "Claude",
     "category": "Language Model",
@@ -208,7 +208,7 @@
   },
   {
     "id": 24,
-    "imageUrl": "https://picsum.photos/seed/X0QD6e5/120/80?blur=10",
+    "imageUrl": "https://picsum.photos/seed/X0QD6e5/320/1800",
     "company": "Stability AI",
     "name": "Stable Diffusion",
     "category": "Image Generation",
@@ -217,7 +217,7 @@
   },
   {
     "id": 25,
-    "imageUrl": "https://picsum.photos/seed/olaveIVO28/120/80?grayscale&blur=1",
+    "imageUrl": "https://picsum.photos/seed/olaveIVO28/320/180?",
     "company": "Midjourney",
     "name": "Midjourney",
     "category": "Image Generation",
@@ -226,7 +226,7 @@
   },
   {
     "id": 26,
-    "imageUrl": "https://picsum.photos/seed/LXGyBCm3Jh/120/80?blur=6",
+    "imageUrl": "https://picsum.photos/seed/LXGyBCm3Jh/320/180",
     "company": "NVIDIA",
     "name": "NVIDIA AI Platform",
     "category": "AI Platform",
@@ -235,7 +235,7 @@
   },
   {
     "id": 27,
-    "imageUrl": "https://picsum.photos/seed/sgjsLChpM/120/80?blur=5",
+    "imageUrl": "https://picsum.photos/seed/sgjsLChpM/320/180",
     "company": "Intel",
     "name": "Intel AI Analytics Toolkit",
     "category": "AI Toolkit",
@@ -244,7 +244,7 @@
   },
   {
     "id": 28,
-    "imageUrl": "https://picsum.photos/seed/so3pdQac1p/120/80?blur=9",
+    "imageUrl": "https://picsum.photos/seed/so3pdQac1p/320/180",
     "company": "IBM",
     "name": "IBM Watson",
     "category": "AI Services",
@@ -253,7 +253,7 @@
   },
   {
     "id": 29,
-    "imageUrl": "https://picsum.photos/seed/eEcMqZwY/120/80?blur=5",
+    "imageUrl": "https://picsum.photos/seed/eEcMqZwY/320/180",
     "company": "Salesforce",
     "name": "Einstein AI",
     "category": "AI for CRM",
@@ -262,7 +262,7 @@
   },
   {
     "id": 30,
-    "imageUrl": "https://picsum.photos/seed/wvuMb5q/120/80?grayscale&blur=7",
+    "imageUrl": "https://picsum.photos/seed/wvuMb5q/320/180?",
     "company": "Adobe",
     "name": "Adobe Sensei",
     "category": "AI for Creative Tools",
@@ -271,7 +271,7 @@
   },
   {
     "id": 31,
-    "imageUrl": "https://picsum.photos/seed/4guaInVHT/120/80?blur=8",
+    "imageUrl": "https://picsum.photos/seed/4guaInVHT/320/180",
     "company": "Amazon",
     "name": "Alexa",
     "category": "Virtual Assistant",
@@ -280,7 +280,7 @@
   },
   {
     "id": 32,
-    "imageUrl": "https://picsum.photos/seed/B2RYyFIL5/120/80?grayscale&blur=6",
+    "imageUrl": "https://picsum.photos/seed/B2RYyFIL5/320/180?",
     "name": "GitHub Copilot",
     "category": "Code Completion",
     "description": "AI pair programmer that suggests code completions in real-time.",
@@ -289,7 +289,7 @@
   },
   {
     "id": 33,
-    "imageUrl": "https://picsum.photos/seed/DzG0FI16/120/80?blur=8",
+    "imageUrl": "https://picsum.photos/seed/DzG0FI16/320/180",
     "name": "Midjourney",
     "category": "Image Generation",
     "description": "AI tool that generates images from text descriptions.",
@@ -298,7 +298,7 @@
   },
   {
     "id": 34,
-    "imageUrl": "https://picsum.photos/seed/sRm5Nx/120/80?blur=8",
+    "imageUrl": "https://picsum.photos/seed/sRm5Nx/320/180",
     "name": "Google AutoML",
     "category": "AutoML Platform",
     "description": "Platform that automates the process of building and deploying machine learning models.",
@@ -307,7 +307,7 @@
   },
   {
     "id": 35,
-    "imageUrl": "https://picsum.photos/seed/hltHHy2/120/80?grayscale&blur=5",
+    "imageUrl": "https://picsum.photos/seed/hltHHy2/320/180?",
     "name": "Azure Machine Learning",
     "category": "Machine Learning Platform",
     "description": "Cloud-based platform for building, training, and deploying machine learning models.",
@@ -316,7 +316,7 @@
   },
   {
     "id": 36,
-    "imageUrl": "https://picsum.photos/seed/N1ccYfdZ/120/80?blur=4",
+    "imageUrl": "https://picsum.photos/seed/N1ccYfdZ/320/180",
     "name": "Grammarly",
     "category": "AI Writing Assistant",
     "description": "AI-powered writing assistant for grammar, spelling, and style.",
@@ -325,7 +325,7 @@
   },
   {
     "id": 37,
-    "imageUrl": "https://picsum.photos/seed/Fq2lcDl/120/80?blur=8",
+    "imageUrl": "https://picsum.photos/seed/Fq2lcDl/320/180",
     "name": "GitHub Copilot X",
     "category": "AI Pair Programmer",
     "description": "AI-powered pair programmer that can help with code generation, explanation, and testing.",
@@ -334,7 +334,7 @@
   },
   {
     "id": 38,
-    "imageUrl": "https://picsum.photos/seed/hevGl/120/80?grayscale&blur=10",
+    "imageUrl": "https://picsum.photos/seed/hevGl/320/180?",
     "name": "Amazon CodeWhisperer",
     "category": "AI Pair Programmer",
     "description": "AI-powered coding assistant that generates code suggestions.",
@@ -343,7 +343,7 @@
   },
   {
     "id": 39,
-    "imageUrl": "https://picsum.photos/seed/nMNsQxF/120/80?grayscale&blur=8",
+    "imageUrl": "https://picsum.photos/seed/nMNsQxF/320/180?",
     "name": "RunwayML",
     "category": "Machine Learning Platform",
     "description": "Creative AI platform for building and deploying machine learning models.",
@@ -352,7 +352,7 @@
   },
   {
     "id": 40,
-    "imageUrl": "https://picsum.photos/seed/PZFiivS/120/80?grayscale&blur=2",
+    "imageUrl": "https://picsum.photos/seed/PZFiivS/320/180?",
     "name": "TensorFlow",
     "category": "Machine Learning Framework",
     "description": "Open-source machine learning framework developed by Google.",
@@ -361,7 +361,7 @@
   },
   {
     "id": 41,
-    "imageUrl": "https://picsum.photos/seed/DcMIWK/120/80?blur=8",
+    "imageUrl": "https://picsum.photos/seed/DcMIWK/320/180",
     "name": "PyTorch",
     "category": "Machine Learning Framework",
     "description": "Open-source machine learning framework developed by Meta.",
@@ -370,7 +370,7 @@
   },
   {
     "id": 42,
-    "imageUrl": "https://picsum.photos/seed/2p3fQR/120/80?grayscale&blur=4",
+    "imageUrl": "https://picsum.photos/seed/2p3fQR/320/180?",
     "name": "Google Cloud Vertex AI",
     "category": "Machine Learning Platform",
     "description": "End-to-end platform for building and deploying machine learning models.",
@@ -379,7 +379,7 @@
   },
   {
     "id": 43,
-    "imageUrl": "https://picsum.photos/seed/JLzgKU5ZdS/120/80?blur=3",
+    "imageUrl": "https://picsum.photos/seed/JLzgKU5ZdS/320/180",
     "name": "Amazon SageMaker",
     "category": "Machine Learning Platform",
     "description": "Fully managed platform for building, training, and deploying machine learning models.",
@@ -388,7 +388,7 @@
   },
   {
     "id": 44,
-    "imageUrl": "https://picsum.photos/seed/UqU8ewpe/120/80?grayscale&blur=2",
+    "imageUrl": "https://picsum.photos/seed/UqU8ewpe/320/180?",
     "name": "OpenAI Gym",
     "category": "Reinforcement Learning",
     "description": "Toolkit for developing and comparing reinforcement learning algorithms.",

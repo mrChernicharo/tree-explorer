@@ -8,18 +8,21 @@ export interface DataEntry {
 export interface Org {
   id: string;
   name: string;
+  imageUrl: string;
   type: "org";
   parentId: "root";
 }
 export interface User {
   id: string;
   name: string;
+  imageUrl: string;
   type: "user";
   parentId: string;
 }
 export interface Company {
   id: string;
   name: string;
+  imageUrl: string;
   type: "company";
   parentId: "root";
 }
@@ -32,12 +35,6 @@ export interface ServiceJSON {
   description: string;
   company: string;
   release_date: number;
-}
-export interface SimpleService {
-  id: string;
-  name: string;
-  type: "service";
-  parentId: string;
 }
 
 export interface Service extends Omit<ServiceJSON, "id"> {
@@ -61,6 +58,7 @@ export type HierarchicalData<T> = T & {
 export interface INodeData {
   id: string;
   name: string;
+  type: string;
   count: number;
   children: INodeData[];
 }

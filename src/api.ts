@@ -1,5 +1,5 @@
 import { faker } from "@faker-js/faker";
-import { Org, User, Company, Service, Interaction, DB, ServiceJSON, SimpleService } from "./types";
+import { Org, User, Company, Service, Interaction, DB, ServiceJSON } from "./types";
 import { getRandomInt } from "./helperFns";
 // @ts-ignore
 import servicesList from "/src/services.json";
@@ -15,29 +15,42 @@ type Opts = {
 
 const LIMIT = 5;
 
+const db: DB = { orgs: [], users: [], companies: [], services: [], interactions: [] };
+
 class Api {
-  db: DB = { orgs: [], users: [], companies: [], services: [], interactions: [] };
   orgOffset = 0;
   orgOffsets: { [k: string]: number } = {};
   userOffsets: { [k: string]: number } = {};
   interactionOffsets: { [k: string]: { [k: string]: number } } = {};
 
   constructor() {
+    this.#initDB();
+  }
+
+  #initDB() {
     const orgCount = 5;
     for (let i = 0; i < orgCount; i++) {
-      this.db.orgs.push({
+      db.orgs.push({
         id: `org-${i + 1}`,
         name: faker.company.name(),
+        imageUrl: faker.image.urlPicsumPhotos({ width: 320, height: 180, blur: 0, grayscale: false }),
+        // imageUrl: faker.image.avatar(),
+        // imageUrl: faker.image.url({ width: 128, height: 128 }),
+        // imageUrl: faker.image.dataUri({ width: 128, height: 128 }),
+        // imageUrl: faker.image.urlLoremFlickr({ width: 128, height: 128 }),
         type: "org",
         parentId: "root",
       });
     }
     const userCount = orgCount * 50;
     for (let i = 0; i < userCount; i++) {
-      const parentId = `org-${getRandomInt(1, this.db.orgs.length)}`;
-      this.db.users.push({
+      const parentId = `org-${getRandomInt(1, db.orgs.length)}`;
+      db.users.push({
         id: `user-${i + 1}`,
         name: faker.person.fullName(),
+        imageUrl: faker.image.avatar(),
+        // imageUrl: faker.image.avatarGitHub(),
+        // imageUrl: faker.image.avatarGitHub(),
         type: "user",
         parentId,
       });
@@ -49,9 +62,10 @@ class Api {
     }
     const companyNames = [...companyNamesSet];
     for (let i = 0; i < companyNames.length; i++) {
-      this.db.companies.push({
+      db.companies.push({
         id: `company-${i + 1}`,
         name: companyNames[i],
+        imageUrl: faker.image.urlLoremFlickr({ width: 128, height: 128 }),
         type: "company",
         parentId: "root",
       });
@@ -59,23 +73,23 @@ class Api {
 
     for (let i = 0; i < servicesList.length; i++) {
       const service = servicesList[i];
-      const parentId = `company-${this.db.companies.find((com) => com.name === service.company)!}`;
-      this.db.services.push({
+      const company = db.companies.find((com) => com.name === service.company)!;
+      db.services.push({
         ...service,
         id: `service-${i + 1}`,
         type: "service",
-        parentId,
+        parentId: company.id,
       });
     }
 
     let interactionIdx = 1;
-    for (const user of this.db.users) {
+    for (const user of db.users) {
       const serviceCount = getRandomInt(0, 16);
       const userServiceIdsSet = new Set<string>();
 
       while (userServiceIdsSet.size < serviceCount) {
-        const randomServiceIdx = getRandomInt(0, this.db.services.length - 1);
-        const service = this.db.services[randomServiceIdx];
+        const randomServiceIdx = getRandomInt(0, db.services.length - 1);
+        const service = db.services[randomServiceIdx];
         userServiceIdsSet.add(service.id);
       }
 
@@ -97,9 +111,9 @@ class Api {
         interactionIdx++;
       }
 
-      this.db.interactions.push(...interactions);
+      db.interactions.push(...interactions);
     }
-    console.log(this.db);
+    console.log(db);
   }
 
   async fetchOrgs(options: Opts) {
@@ -109,17 +123,17 @@ class Api {
     const entries: Org[] = [];
     for (let i = 0; i < limit; i++) {
       const idx = limit * offset + i;
-      const org = this.db.orgs[idx];
+      const org = db.orgs[idx];
       if (org) {
         entries.push(org);
       }
     }
     await wait(200);
-    return { entries, totalCount: this.db.orgs.length };
+    return { entries, totalCount: db.orgs.length };
   }
   async fetchOrgUsers(orgId: string, options: Opts) {
     const { limit = LIMIT, offset = 0 } = options;
-    const orgUsers = this.db.users.filter((u) => u.parentId === orgId);
+    const orgUsers = db.users.filter((u) => u.parentId === orgId);
     // console.log("fetchOrgUsers", { orgId, options, orgUsers });
     const entries: User[] = [];
     for (let i = 0; i < limit; i++) {
@@ -134,14 +148,14 @@ class Api {
   }
   async fetchUserServices(userId: string, options: Opts) {
     const { limit = LIMIT, offset = 0 } = options;
-    const userInteractions = this.db.interactions.filter((s) => s.userId === userId);
+    const userInteractions = db.interactions.filter((s) => s.userId === userId);
     const serviceIds = [...new Set(userInteractions.map((int) => int.serviceId))];
     // console.log("fetchUserServices", { userId, options, userInteractions });
-    const entries: SimpleService[] = [];
+    const entries: Service[] = [];
     for (let i = 0; i < limit; i++) {
       const idx = limit * offset + i;
       const serviceId = serviceIds[idx];
-      const service = this.db.services.find((s) => s.id === serviceId);
+      const service = db.services.find((s) => s.id === serviceId);
       if (service) {
         entries.push(service);
       }
@@ -151,7 +165,7 @@ class Api {
   }
   async fetchUserServiceInteractions(userId: string, serviceId: string, options: Opts) {
     const { limit = LIMIT, offset = 0 } = options;
-    const userServiceInteractions = this.db.interactions.filter(
+    const userServiceInteractions = db.interactions.filter(
       (int) => int.userId === userId && int.serviceId === serviceId
     );
 
@@ -253,6 +267,11 @@ class Api {
       }));
       return interactionNodes;
     }
+  }
+
+  getEntry(type: string, id: string) {
+    const t = type as "org" | "user" | "service" | "interaction";
+    return db[`${t}s`].find((el) => el.id === id);
   }
 }
 
