@@ -182,9 +182,9 @@ class Api {
   }
   async fetchUserServiceInteractions(userId: string, serviceId: string, options: Opts) {
     const { limit = LIMIT, offset = 0 } = options;
-    const userServiceInteractions = db.interactions.filter(
-      (int) => int.userId === userId && int.serviceId === serviceId
-    );
+    const userServiceInteractions = [...db.interactions]
+      .filter((int) => int.userId === userId && int.serviceId === serviceId)
+      .sort((a, b) => b.prompts[0].timestamp.getTime() - a.prompts[0].timestamp.getTime());
 
     const entries: Interaction[] = [];
     for (let i = 0; i < limit; i++) {

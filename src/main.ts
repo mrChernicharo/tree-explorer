@@ -3,14 +3,15 @@ import { TreeChart } from "./tree";
 import { INode, Prompt } from "./types";
 
 const canvas = document.querySelector("#frame") as HTMLDivElement;
-const details = document.querySelector("#details-view") as HTMLDivElement;
 const breadcrumbs = document.querySelector("#breadcrumbs") as HTMLDivElement;
 
-const detailsBackArrow = document.querySelector("#details-view #back-arrow") as HTMLDivElement;
+const details = document.querySelector("#details-view") as HTMLDivElement;
+const detailsBackArrow = document.querySelector("#details-view .dismiss-btn") as HTMLDivElement;
 const orgDetails = document.querySelector("#details-view #org-details") as HTMLDivElement;
 const userDetails = document.querySelector("#details-view #user-details") as HTMLDivElement;
 const serviceDetails = document.querySelector("#details-view #service-details") as HTMLDivElement;
 const interactionDetails = document.querySelector("#details-view #interaction-details") as HTMLDivElement;
+const detailsViewContent = document.querySelector("#details-view #details-view-content") as HTMLDivElement;
 
 // const toggleBtn = document.querySelector("#toggle-btn") as HTMLButtonElement;
 // const fetchBtn = document.querySelector("#fetch-btn") as HTMLButtonElement;
@@ -95,54 +96,74 @@ function openDetailsView(linkType: string) {
 
   if (currNodeChain.org) {
     orgDetails.innerHTML = `
-    <div>
-      <img src="${currNodeChain.org.data.imageUrl}" />
-      <h3>${currNodeChain.org.data.name}</h3>
+    <div class="entity-details ${currNodeChain.org.data.type}">
+      <img class="avatar-img" src="${currNodeChain.org.data.imageUrl}" />
+      <h3><img src="org.svg" class="h3-icon" /> ${currNodeChain.org.data.name}</h3>
     </div>
     `;
+    detailsViewContent.innerHTML = `${currNodeChain.org.data.name}`;
   } else {
     orgDetails.innerHTML = "";
   }
 
   if (currNodeChain.user && linkType !== "org") {
     userDetails.innerHTML = `
-    <div>
-      <img src="${currNodeChain.user.data.imageUrl}" />
-      <h3>${currNodeChain.user.data.name}</h3>
+    <div class="entity-details ${currNodeChain.user.data.type}">
+      <img class="avatar-img" src="${currNodeChain.user.data.imageUrl}" />
+      <h3><img src="user.svg" class="h3-icon" />${currNodeChain.user.data.name}</h3>
     </div>
     `;
+    detailsViewContent.innerHTML = `${currNodeChain.user.data.name}`;
   } else {
     userDetails.innerHTML = "";
   }
 
   if (currNodeChain.service && !["org", "user"].includes(linkType)) {
     serviceDetails.innerHTML = `
-    <div>
-      <img src="${currNodeChain.service.data.imageUrl}" />
-      <h3>${currNodeChain.service.data.name}</h3>
+    <div class="entity-details ${currNodeChain.service.data.type}">
+      <img class="avatar-img" src="${currNodeChain.service.data.imageUrl}" />
+      <h3><img src="service.svg" class="h3-icon" />${currNodeChain.service.data.name}</h3>
     </div>
     `;
+    detailsViewContent.innerHTML = `${currNodeChain.service.data.name}`;
   } else {
     serviceDetails.innerHTML = "";
   }
 
   if (currNodeChain.interaction && !["org", "user", "service"].includes(linkType)) {
-    const promptList = `<ul class="prompt-list"> ${(currNodeChain.interaction.data?.prompts || [])
+    interactionDetails.innerHTML = `
+      <div class="entity-details ${currNodeChain.interaction.data.type}">
+        <h3><img src="interaction.svg" class="h3-icon" />${currNodeChain.interaction.data.name}</h3>
+      </div>
+    `;
+
+    detailsViewContent.innerHTML = `<ul class="prompt-list"> ${(currNodeChain.interaction.data.prompts || [])
       .map(
         (prompt: Prompt) => `
-                <li class="timestamp">${prompt.timestamp.toLocaleString("en")}</li>
-                <li class="input">${prompt.input}</li>
-                <li class="output">${prompt.output}</li>
-                `
+          <li>  
+            <div class="input">
+              <div class="top">
+                <img class="avatar-img small" src="${currNodeChain.user?.data.imageUrl}" />
+                <span>
+                  ${currNodeChain.user?.data.name}
+                  <span class="timestamp">${prompt.timestamp.toLocaleString("en")}</span> 
+                </span>
+              </div>
+              <div class="bottom"><span>${prompt.input}</span></div>
+            </div>
+            <div class="output">
+              <div class="top">
+                <img class="avatar-img small" src="${currNodeChain.service?.data.imageUrl}" />
+                <span>
+                  ${currNodeChain.service?.data.name} 
+                </span>
+              </div>
+              <div class="bottom"><span>${prompt.output}</span></div>
+            </div>
+          </li>  
+        `
       )
       .join(" ")} </ul>`;
-
-    interactionDetails.innerHTML = `
-    <div>
-      <h3>${currNodeChain.interaction.data.name}</h3>
-      ${promptList}
-    </div>
-    `;
   } else {
     interactionDetails.innerHTML = "";
   }

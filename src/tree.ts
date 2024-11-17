@@ -3,7 +3,7 @@ import { HierarchicalData, ILink, INode } from "./types";
 import { api } from "./api";
 
 const COLORS = ["#0b9d85", "#0b9d85", "#232bff", "#772dff"];
-const headerHeight = 82;
+const headerHeight = 86;
 
 class TreeChart<T> {
   root!: d3.HierarchyNode<any> & INode;
@@ -43,7 +43,7 @@ class TreeChart<T> {
       .attr("width", this.width)
       .attr("height", this.dx)
       .attr("viewBox", [-this.marginLeft, -this.marginTop, this.width, this.dx])
-      .attr("style", `max-width: 100%; height: ${this.maxHeight}px; font: 10px monospace; user-select: none;`)
+      .attr("style", `max-width: 100%; height: ${this.maxHeight}px; font: 10px appMonospace; user-select: none;`)
       .on("wheel", this.#onWheel.bind(this), false);
 
     this.gLink = this.svg
@@ -126,7 +126,8 @@ class TreeChart<T> {
         const remainingChildren = this.#getRemainingChildCount(d);
         return remainingChildren > 0 ? `${d.data.name} +${remainingChildren}` : d.data.name;
       })
-      .attr("stroke", "white");
+      .attr("stroke", "none")
+      .attr("fill", "white");
     // .attr("stroke-linejoin", "round")
     // .attr("stroke-width", 3)
     // .attr("paint-order", "stroke");
@@ -381,7 +382,7 @@ class TreeChart<T> {
 
   #getTextWidth(d: INode) {
     const remainingChildren = this.#getRemainingChildCount(d);
-    return `${d.data.name} ${remainingChildren}`.length * 6;
+    return `${d.data.name} +${remainingChildren}`.length * 6;
   }
 
   #getNodeWidth(d: INode) {
