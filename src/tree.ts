@@ -25,7 +25,7 @@ class TreeChart<T> {
 
   dx = 26;
 
-  dy = window.innerWidth > 600 ? 250 : 180;
+  dy = window.innerWidth > 600 ? 300 : 180;
   deltaScroll = 0.8;
 
   initTree(hierarchicalData: HierarchicalData<T>, drawDepth = -1) {
@@ -115,7 +115,7 @@ class TreeChart<T> {
       .attr("y", -8)
       .attr("width", (d: INode) => this.#getNodeWidth(d))
       .attr("height", 16)
-      .attr("stroke-width", 2)
+      .attr("stroke-width", 3)
       .attr("fill", (d: INode) => COLORS[d.depth]);
     // .attr("fill", "transparent");
 
@@ -184,7 +184,7 @@ class TreeChart<T> {
       .attr("fill-opacity", 1)
       .attr("stroke-opacity", 1)
       .attr("stroke", (d: INode) => {
-        return d.id === this.selected?.id ? "dodgerblue" : "";
+        return d.id === this.selected?.id ? "#ff52f9" : "";
       });
 
     nodeUpdate
@@ -201,8 +201,8 @@ class TreeChart<T> {
 
     nodeUpdate
       .select(".remaining-text")
-      .attr("stroke", "dodgerblue")
-      .attr("fill", "dodgerblue")
+      .attr("stroke", "#ff52f9")
+      .attr("fill", "#ff52f9")
       .text((d: INode) => {
         return this.#getRemainingChildCount(d);
       })

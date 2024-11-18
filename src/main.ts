@@ -1,6 +1,6 @@
 import { api, LIMIT } from "./api";
 import { TreeChart } from "./tree";
-import { INode, Prompt } from "./types";
+import { Company, INode, Prompt, Service } from "./types";
 import { parseEntryId, filterDuplicates, dateIntl } from "./helperFns";
 
 const icons: Record<string, string> = {
@@ -131,6 +131,10 @@ function populateDetailsView() {
             <img class="icon" src="${icons[type]}" /> 
             <div>
               <h2>${name}</h2>
+              <div>${id}</div>
+            </div>
+          </div>
+          <div class="body">
               <div>suggested title: ${suggestedTitle}</div>
               <div>subject: ${subject}</div>
               <div>green: ${green}</div>
@@ -138,9 +142,9 @@ function populateDetailsView() {
               <div>white: ${white}</div>
               <div>black: ${black}</div>
               <div>orange: ${orange}</div>
-
+              <br />
               <div><h3>${prompts?.totalCount} prompts</h3></div>
-            </div>
+              <br />
           </div>
           <ul class="prompt-list"> ${(prompts?.entries || [])
             .map(
@@ -197,51 +201,64 @@ function populateDetailsView() {
       return detailsViewContent;
     }
     case "service": {
-      const { name, imageUrl, type, company, description, release_date } = currNodeChain.service!.data;
+      const { id, name, imageUrl, type, description, category, release_date } = currNodeChain.service!.data;
+      const serviceId = parseEntryId("service", id);
+      const { parentId: companyId } = api.getEntry("services", serviceId) as Service;
+      const company = api.getEntry("companies", companyId) as Company;
+
       return (detailsViewContent.innerHTML = `
         <div>
           <div class="head">
             <small>service</small>
             <img class="avatar-img" src="${imageUrl}" />
             <h2><img class="icon" src="${icons[type]}" /> ${name}</h2>
+            <div>${serviceId}</div>
           </div>
 
           <div class="body">
-            <div>${company}</div>
-            <div>${release_date}</div>
-            <div>${description}</div>
+            <div>description: ${description}</div>
+            <div>category: ${category}</div>
+            <div>release date: ${release_date}</div>
+            <br />
+            <h4>Company: ${company.name}</h4>
+            <div>country: ${company.country}</div>
           </div>
         </div>
         `);
     }
     case "user": {
-      const { name, imageUrl, type, position, zodiacSign, favoriteFood } = currNodeChain.user!.data;
+      const { id, name, imageUrl, type, position, zodiacSign, favoriteFood } = currNodeChain.user!.data;
       return (detailsViewContent.innerHTML = `
         <div>
           <div class="head">
             <small>user</small>
             <img class="avatar-img" src="${imageUrl}" />
             <h2><img class="icon" src="${icons[type]}" /> ${name}</h2>
+            <div>${position}</div>
+            <div>${id}</div>
           </div>
 
           <div class="body">
-            <div>${position}</div>
-            <div>${favoriteFood}</div>
-            <div>${zodiacSign}</div>
+            <div>favorite food: ${favoriteFood}</div>
+            <div>zodiac sign: ${zodiacSign}</div>
           </div>
         </div>
         `);
     }
     case "org":
     default: {
-      const { name, imageUrl, type } = currNodeChain.org!.data;
+      const { id, name, imageUrl, type, country } = currNodeChain.org!.data;
       return (detailsViewContent.innerHTML = `
         <div>
           <div class="head">
             <small>organization</small>
             <img class="avatar-img" src="${imageUrl}" />
             <h2><img class="icon" src="${icons[type]}" /> ${name}</h2>
+            <div>${id}</div>
           </div>
+          <div class="body">
+            <span>country: ${country}</span>
+          </div>  
         </div>
         `);
     }

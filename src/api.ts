@@ -33,7 +33,7 @@ class Api {
         entries.push(org);
       }
     }
-    await wait(200);
+    await wait(300);
     return { entries, totalCount: db.orgs.length };
   }
   async fetchOrgUsers(orgId: string, options: Opts) {
@@ -48,7 +48,7 @@ class Api {
       }
     }
     console.log("fetchOrgUsers", { orgId, options, orgUsers, entries });
-    await wait(200);
+    await wait(300);
     return { entries, totalCount: orgUsers.length };
   }
   async fetchUserServices(userId: string, options: Opts) {
@@ -65,7 +65,7 @@ class Api {
       }
     }
     console.log("fetchUserServices", { userId, options, userInteractions, entries });
-    await wait(200);
+    await wait(300);
     return { entries, totalCount: serviceIds.length };
   }
   async fetchUserServiceInteractions(userId: string, serviceId: string, options: Opts) {
@@ -83,7 +83,7 @@ class Api {
       }
     }
     // console.log("::: fetchUserServiceInteractions", { userId, serviceId, userServiceInteractions, entries });
-    await wait(200);
+    await wait(300);
     return { entries, totalCount: userServiceInteractions.length };
   }
   async fetchInteractionPrompts(interactionId: string, options: Opts) {
@@ -101,7 +101,7 @@ class Api {
       }
     }
     console.log("::: fetchInteractionPrompts", { interactionId, prompts, db, entries });
-    await wait(200);
+    await wait(300);
     return { entries, totalCount: prompts.length };
   }
   //
@@ -195,8 +195,8 @@ class Api {
   }
 
   getEntry(type: string, id: string) {
-    const t = type as "org" | "user" | "service" | "interaction";
-    return db[`${t}s`].find((el) => el.id === id);
+    const t = type as "orgs" | "users" | "services" | "companies" | "interactions";
+    return db[t].find((el) => el.id === id);
   }
 }
 
