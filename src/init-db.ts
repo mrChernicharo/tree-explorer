@@ -2,28 +2,24 @@ import path from "node:path";
 import fs from "node:fs/promises";
 import { faker } from "@faker-js/faker";
 import { getRandomInt } from "./helperFns.ts";
-import servicesList from "./services.json" with { type: "json" };
+import servicesList from "./assets/services.json" with { type: "json" };
 import type { DB, ServiceJSON, Interaction, Prompt } from "./types.ts";
-;
-
-console.log("hello db init");
 
 
 const companies = ['Acuvity', 'Uber', 'Netflix', 'Doordash', 'Genesys', 'Apple'];
+const companyCountries = ['USA', 'Germany', 'USA', 'USA', 'UK', 'USA'];
 const companyImgUrls = [
   'https://media.licdn.com/dms/image/v2/D560BAQG3fC9tq42A9A/company-logo_200_200/company-logo_200_200/0/1714841959020?e=1740009600&v=beta&t=80XwaX1iyRZ-prk-PIRLWyFPlys3GfE7Hfjf9GEQ7ew',
-  'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQFbOgQZOKgl4K-1K3OSeJqbnPEfp6ddHKpEQ&s', 
+  'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQFbOgQZOKgl4K-1K3OSeJqbnPEfp6ddHKpEQ&s',
   'https://static.vecteezy.com/system/resources/previews/020/336/373/non_2x/netflix-logo-netflix-icon-free-free-vector.jpg',
-  'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQM92cet5zqsAAPE_sxAKbIkQw7TLtJHCeijw&s', 
-  'https://camo.githubusercontent.com/97e94dbac4db13f3308a611c7ace6c930032a69ec735a8fb4c1e6ff03670ac52/68747470733a2f2f737472696e673764657666696c65732e73332e616d617a6f6e6177732e636f6d2f6a6f62732f67656e657379732e77656270', 
+  'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQM92cet5zqsAAPE_sxAKbIkQw7TLtJHCeijw&s',
+  'https://camo.githubusercontent.com/97e94dbac4db13f3308a611c7ace6c930032a69ec735a8fb4c1e6ff03670ac52/68747470733a2f2f737472696e673764657666696c65732e73332e616d617a6f6e6177732e636f6d2f6a6f62732f67656e657379732e77656270',
   'https://logodownload.org/wp-content/uploads/2013/12/apple-logo-2-1.png'
 ];
-const companyCountries = ['USA','Germany','USA','USA','UK','USA' ]
+
 
 const orgCount = companies.length;
-
 const usersPerOrg = 24;
-
 const maxServicesPerUser = 12;
 
 const minInteractionCount = 2;
@@ -162,18 +158,18 @@ async function initDB() {
   }
 
 
-  console.log('ready to write...', db);
-  let time = Date.now();
   await fs.writeFile(path.join(process.cwd(), "src", "assets", "data.json"), JSON.stringify(db));
-  const diffMs = Date.now() - time;
-  console.log(`DB write successful! took ${diffMs}ms`);
+  console.log(`DB write successful!`);
 
 }
 
 
 async function main() {
+  let time = Date.now();
+  console.log('writing data.json file...');
   await initDB();
-  console.log('DONE!');
+  const diffMs = Date.now() - time;
+  console.log(`DONE!  took ${diffMs}ms`);
 }
 
 main();

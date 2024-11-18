@@ -158,10 +158,7 @@ class TreeChart<T> {
       .attr("width", 32)
       .attr("x", (d: INode) => this.#getNodeWidth(d) - 16)
       .attr("y", -13)
-      .style("display", "none")
-      .on("click", () => {
-        window.dispatchEvent(new CustomEvent("open-details-view"));
-      });
+      .style("display", "none");
 
     nodeEnter
       .append("image")
@@ -192,7 +189,7 @@ class TreeChart<T> {
       .attr("cx", (d: INode) => d.data.name.length * 6 + 36)
       .attr("cy", (d: INode) => 0)
       .attr("stroke-opacity", 0)
-      .style("visibility", (d: INode) => (d.id == this.selected?.id && this.isLoading ? "visible" : "hidden"));
+      .style("display", (d: INode) => (d.id == this.selected?.id && this.isLoading ? "block" : "none"));
 
     nodeUpdate.select("text").text((d: INode) => {
       const remainingChildren = this.#getRemainingChildCount(d);
@@ -295,20 +292,37 @@ class TreeChart<T> {
 
   async onNodeClick(event: PointerEvent | null, d: INode) {
     const sameElement = d.id === this.selected?.id;
-    // console.log("onNodeClick:::", event?.composedPath(), { event, d, root: this.root });
+    console.log("onNodeClick:::", event?.composedPath(), { event, d, root: this.root });
 
     let clickedNode = false;
     let clickedPlus = false;
+    let clickedExpand = false;
     for (const element of event!.composedPath() || []) {
       const el = element as HTMLElement;
-      if (el.classList && (el.classList.contains("node") || el.classList.contains("node-text"))) {
+      if (!el.classList) continue;
+
+      if (el.classList.contains("node") || el.classList.contains("node-text")) {
         clickedNode = true;
         break;
       }
-      if (el.classList && (el.classList.contains("plus-icon") || el.classList.contains("remaining-text"))) {
+      if (
+        (el.classList.contains("remaining-text") && d.data.type !== "interaction") ||
+        (el.classList && el.classList.contains("plus-icon"))
+      ) {
         clickedPlus = true;
         break;
       }
+      if (
+        (el.classList.contains("remaining-text") && d.data.type === "interaction") ||
+        el.classList.contains("expand-icon")
+      ) {
+        clickedExpand = true;
+        break;
+      }
+    }
+
+    if (clickedExpand) {
+      return window.dispatchEvent(new CustomEvent("open-details-view"));
     }
 
     if (clickedPlus) {

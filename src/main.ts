@@ -1,7 +1,7 @@
 import { api, LIMIT } from "./api";
 import { TreeChart } from "./tree";
-import { Company, INode, Prompt, Service } from "./types";
-import { parseEntryId, filterDuplicates, dateIntl, dobIntl } from "./helperFns";
+import { Company, INode, Interaction, Prompt, Service } from "./types";
+import { createSvgCircle, parseEntryId, filterDuplicates, dateIntl, dobIntl } from "./helperFns";
 
 const icons: Record<string, string> = {
   org: "org.svg",
@@ -21,7 +21,7 @@ const detailsViewContent = document.querySelector("#details-view #details-view-c
 let selectedNode: INode | null = null;
 
 const currNodeChain: Record<string, INode | null> = { org: null, user: null, service: null, interaction: null };
-const promtsCache = new Map<string, { entries: Prompt[]; totalCount: number }>();
+const promptsCache = new Map<string, { entries: Prompt[]; totalCount: number }>();
 
 /***********************************************************************/
 
@@ -32,7 +32,7 @@ async function initializeTree() {
   return treeChart.initTree(rootNode);
 }
 
-function onTreeUpdate(event: Event) {
+function onTreeUpdated(event: Event) {
   const ev = event as Event & { detail: { selectedNode: INode | null } };
   if (!ev.detail.selectedNode) return;
 
@@ -63,13 +63,13 @@ function onTreeUpdate(event: Event) {
       currNodeChain.service = selectedNode.parent;
       currNodeChain.interaction = selectedNode;
       const interactionId = parseEntryId("interaction", selectedNode.data.id);
-      if (!promtsCache.get(interactionId)) {
+      if (!promptsCache.get(interactionId)) {
         api.fetchInteractionPrompts(interactionId, { offset: 0 }).then((prompts) => {
-          if (!promtsCache.get(interactionId)) {
-            promtsCache.set(interactionId, { entries: [], totalCount: 0 });
+          if (!promptsCache.get(interactionId)) {
+            promptsCache.set(interactionId, { entries: [], totalCount: 0 });
           }
-          const prev = promtsCache.get(interactionId)!;
-          promtsCache.set(interactionId, {
+          const prev = promptsCache.get(interactionId)!;
+          promptsCache.set(interactionId, {
             entries: filterDuplicates([...prev.entries, ...prompts.entries]),
             totalCount: prompts.totalCount,
           });
@@ -116,34 +116,31 @@ function updateBreadcrumbs() {
   });
 }
 
-function populateDetailsView() {
-  switch (details.dataset.type) {
-    case "interaction": {
-      const {
-        id,
-        name,
-        type,
-        suggestedTitle,
-        confidence,
-        sentiment,
-        subject,
-        ip,
-        latency,
-        green,
-        black,
-        blue,
-        white,
-        orange,
-        purple,
-        x,
-        y,
-        z,
-        w,
-      } = currNodeChain.interaction!.data;
-      const interactionId = parseEntryId("interaction", id);
-      const prompts = promtsCache.get(interactionId);
-
-      detailsViewContent.innerHTML = `
+function buildInteractionDetailsView() {
+  const {
+    id,
+    name,
+    type,
+    suggestedTitle,
+    confidence,
+    sentiment,
+    subject,
+    ip,
+    latency,
+    green,
+    black,
+    blue,
+    white,
+    orange,
+    purple,
+    x,
+    y,
+    z,
+    w,
+  } = currNodeChain.interaction!.data;
+  const interactionId = parseEntryId("interaction", id);
+  const prompts = promptsCache.get(interactionId);
+  const viewContent = `
         <div>  
           <div class="head">
             <small>interaction</small>
@@ -214,109 +211,130 @@ function populateDetailsView() {
         <div>  
         `;
 
-      const remaining = (prompts?.totalCount || 0) - ((prompts?.entries || []).length || 0);
-      if (remaining > 0) {
-        const loadMoreBtn = document.createElement("button");
-        loadMoreBtn.classList.add("load-more-btn");
-        loadMoreBtn.innerHTML = `
-          <span>Load more Prompts +${remaining}</span>
-          <img src="spinner.svg" width="24" height="24" />
-          `;
-        loadMoreBtn.onclick = () => {
-          loadMoreBtn.classList.add("loading");
-          const offset = Math.floor(((prompts?.entries || []).length || 0) / LIMIT);
-          api
-            .fetchInteractionPrompts(interactionId, { offset })
-            .then((prompts) => {
-              if (!promtsCache.get(interactionId)) {
-                promtsCache.set(interactionId, { entries: [], totalCount: 0 });
-              }
-              const prev = promtsCache.get(interactionId)!;
-              const entries = filterDuplicates([...prev.entries, ...prompts.entries]);
-              console.log({ offset, entries, prev });
-              promtsCache.set(interactionId, { entries, totalCount: prompts.totalCount });
-              populateDetailsView();
-            })
-            .finally(() => {
-              loadMoreBtn.classList.remove("loading");
-            });
-        };
+  let loadMoreBtn: HTMLButtonElement | null = null;
+  const remaining = (prompts?.totalCount || 0) - ((prompts?.entries || []).length || 0);
+  if (remaining > 0) {
+    loadMoreBtn = document.createElement("button");
+    loadMoreBtn.classList.add("load-more-btn");
+    loadMoreBtn.innerHTML = `
+            <span>Load more Prompts +${remaining}</span>
+            <img src="spinner.svg" width="24" height="24" />
+            `;
+    loadMoreBtn.onclick = () => {
+      (loadMoreBtn as HTMLButtonElement).classList.add("loading");
+      const offset = Math.floor(((prompts?.entries || []).length || 0) / LIMIT);
+      api
+        .fetchInteractionPrompts(interactionId, { offset })
+        .then((prompts) => {
+          if (!promptsCache.get(interactionId)) {
+            promptsCache.set(interactionId, { entries: [], totalCount: 0 });
+          }
+          const prev = promptsCache.get(interactionId)!;
+          const entries = filterDuplicates([...prev.entries, ...prompts.entries]);
+          console.log({ offset, entries, prev });
+          promptsCache.set(interactionId, { entries, totalCount: prompts.totalCount });
+          populateDetailsView();
+        })
+        .finally(() => {
+          (loadMoreBtn as HTMLButtonElement).classList.remove("loading");
+        });
+    };
+  }
+
+  return { viewContent, loadMoreBtn };
+}
+
+function buildServiceDetailsView() {
+  const { id, name, imageUrl, type, description, category, release_date } = currNodeChain.service!.data;
+  const serviceId = parseEntryId("service", id);
+  const { parentId: companyId } = api.getEntry("services", serviceId) as Service;
+  const company = api.getEntry("companies", companyId) as Company;
+
+  return `
+    <div>
+      <div class="head">
+        <small>service</small>
+        <img class="avatar-img" src="${imageUrl}" />
+        <h2><img class="icon" src="${icons[type]}" /> ${name}</h2>
+        <div>${serviceId}</div>
+      </div>
+
+      <div class="body">
+        <div>${description}</div>
+        <br />
+        <div>category: ${category}</div>
+        <div>release date: ${release_date}</div>
+        <br />
+        <h4>Company: ${company.name}</h4>
+        <div>country: ${company.country}</div>
+      </div>
+    </div>
+    `;
+}
+
+function buildUserDetailsView() {
+  const { id, name, imageUrl, type, email, dateOfBirth, position, zodiacSign, favoriteFood } = currNodeChain.user!.data;
+  const dob = new Date(dateOfBirth!);
+  return `
+  <div>
+    <div class="head">
+      <small>user</small>
+      <img class="avatar-img" src="${imageUrl}" />
+      <h2><img class="icon" src="${icons[type]}" /> ${name}</h2>
+      <div>${position}</div>
+      <div>${id}</div>
+    </div>
+
+    <div class="body">
+      <div><a href="mailto:${email}" target="_blank">${email}</a></div>
+      <br />
+      <div>birthdate: ${dobIntl.format(dob)}</div>
+      <div>age: ${Math.floor((Date.now() - dob!.getTime()) / (365 * 24 * 60 * 60 * 1000))} years</div>
+      <br />
+      <div>favorite food: ${favoriteFood}</div>
+      <div>zodiac sign: ${zodiacSign}</div>
+    </div>
+  </div>
+  `;
+}
+
+function buildOrgDetailsView() {
+  const { id, name, imageUrl, type, country } = currNodeChain.org!.data;
+  return `
+    <div>
+      <div class="head">
+        <small>organization</small>
+        <img class="avatar-img" src="${imageUrl}" />
+        <h2><img class="icon" src="${icons[type]}" /> ${name}</h2>
+        <div>${id}</div>
+      </div>
+      <div class="body">
+        <span>country: ${country}</span>
+      </div>  
+    </div>
+    `;
+}
+
+function populateDetailsView() {
+  switch (details.dataset.type) {
+    case "interaction":
+      const { viewContent, loadMoreBtn } = buildInteractionDetailsView();
+      detailsViewContent.innerHTML = viewContent;
+      if (loadMoreBtn) {
         detailsViewContent.append(loadMoreBtn);
       }
-
-      return detailsViewContent;
-    }
-    case "service": {
-      const { id, name, imageUrl, type, description, category, release_date } = currNodeChain.service!.data;
-      const serviceId = parseEntryId("service", id);
-      const { parentId: companyId } = api.getEntry("services", serviceId) as Service;
-      const company = api.getEntry("companies", companyId) as Company;
-
-      return (detailsViewContent.innerHTML = `
-        <div>
-          <div class="head">
-            <small>service</small>
-            <img class="avatar-img" src="${imageUrl}" />
-            <h2><img class="icon" src="${icons[type]}" /> ${name}</h2>
-            <div>${serviceId}</div>
-          </div>
-
-          <div class="body">
-            <div>${description}</div>
-            <br />
-            <div>category: ${category}</div>
-            <div>release date: ${release_date}</div>
-            <br />
-            <h4>Company: ${company.name}</h4>
-            <div>country: ${company.country}</div>
-          </div>
-        </div>
-        `);
-    }
-    case "user": {
-      const { id, name, imageUrl, type, email, dateOfBirth, position, zodiacSign, favoriteFood } =
-        currNodeChain.user!.data;
-      const dob = new Date(dateOfBirth!);
-      return (detailsViewContent.innerHTML = `
-        <div>
-          <div class="head">
-            <small>user</small>
-            <img class="avatar-img" src="${imageUrl}" />
-            <h2><img class="icon" src="${icons[type]}" /> ${name}</h2>
-            <div>${position}</div>
-            <div>${id}</div>
-          </div>
-
-          <div class="body">
-            <div><a href="mailto:${email}" target="_blank">${email}</a></div>
-            <br />
-            <div>birthdate: ${dobIntl.format(dob)}</div>
-            <div>age: ${Math.floor((Date.now() - dob!.getTime()) / (365 * 24 * 60 * 60 * 1000))} years</div>
-            <br />
-            <div>favorite food: ${favoriteFood}</div>
-            <div>zodiac sign: ${zodiacSign}</div>
-          </div>
-        </div>
-        `);
-    }
+      break;
+    case "service":
+      detailsViewContent.innerHTML = buildServiceDetailsView();
+      break;
+    case "user":
+      detailsViewContent.innerHTML = buildUserDetailsView();
+      break;
     case "org":
-    default: {
-      const { id, name, imageUrl, type, country } = currNodeChain.org!.data;
-      return (detailsViewContent.innerHTML = `
-        <div>
-          <div class="head">
-            <small>organization</small>
-            <img class="avatar-img" src="${imageUrl}" />
-            <h2><img class="icon" src="${icons[type]}" /> ${name}</h2>
-            <div>${id}</div>
-          </div>
-          <div class="body">
-            <span>country: ${country}</span>
-          </div>  
-        </div>
-        `);
-    }
+      detailsViewContent.innerHTML = buildOrgDetailsView();
+      break;
   }
+  return detailsViewContent;
 }
 
 function openDetailsView(linkType: string) {
@@ -332,16 +350,15 @@ function openMainView() {
   canvas.style.display = "block";
 }
 
-function createSvgCircle(color: string) {
-  return `
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" style="background-color: transparent">
-      <circle cx="8" cy="8" r="8" fill="${color}" stroke="#787089" stroke-width="0.2"/>
-    </svg>
-  `;
+async function main() {
+  window.addEventListener("tree-updated", onTreeUpdated);
+  window.addEventListener("open-details-view", () => openDetailsView("interaction"));
+  detailsBackArrow.addEventListener("click", openMainView);
+
+  const { svg } = await initializeTree();
+  canvas.appendChild(svg);
+
+  document.body.classList.remove("loading");
 }
 
-window.addEventListener("tree-updated", onTreeUpdate);
-window.addEventListener("open-details-view", () => openDetailsView("interaction"));
-detailsBackArrow.onclick = openMainView;
-const { svg } = await initializeTree();
-canvas.appendChild(svg);
+main();

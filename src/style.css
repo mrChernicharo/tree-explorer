@@ -12,7 +12,7 @@
 
 @font-face {
   font-family: appMonospace;
-  src: url(/src/RobotoMono-Medium.ttf);
+  src: url(/src/assets/RobotoMono-Medium.ttf);
 }
 
 * {
@@ -82,10 +82,6 @@ section.top .left p {
   font-size: 20px;
   line-height: 28px;
   max-width: 500px;
-
-  /* padding-inline: 50px; */
-  /* max-width: 350px; */
-  /* text-align: right; */
   /* border: 1px solid; */
 }
 
@@ -93,14 +89,11 @@ section.top .right {
   padding: 50px;
   padding-left: 0px;
   width: 50vw;
-  /* max-height: 400px; */
   /* border: 1px solid; */
 }
 
 dotlottie-player {
-  /* max-width: 400px; */
   max-height: 500px;
-  /* margin: 0 auto; */
 }
 
 section.bottom {
@@ -110,12 +103,13 @@ section.bottom {
 
 .cta-button {
   text-decoration: none;
-  background-image: linear-gradient(var(--accent-color), var(--accent-color-2));
+  background-image: linear-gradient(30deg, var(--accent-color), var(--accent-color-2));
   color: var(--light);
   font-size: 22px;
   font-weight: bold;
   border-radius: 1000px;
   padding: 12px 24px;
+  width: 280px;
   cursor: pointer;
   border: none;
 }
@@ -126,6 +120,9 @@ section.bottom {
 
 body.app {
   background-color: var(--light);
+}
+body.app.loading {
+  background: no-repeat center center url(/src/assets/global-loading.gif);
 }
 
 #breadcrumbs {
@@ -166,9 +163,7 @@ body.app {
 }
 
 .entity-card.active small {
-  color: #ff52f9;
   color: var(--secondary);
-  /* color: var(--primary); */
   font-weight: bold;
 }
 
@@ -245,7 +240,6 @@ svg {
 }
 
 #details-view-content .body {
-  /* border: 2px solid var(--light-2); */
   background-color: var(--light-2);
   border-radius: 16px;
   padding-block: 36px;
@@ -319,10 +313,6 @@ svg {
 .load-more-btn.loading img {
   opacity: 1;
 }
-
-/* ul.prompt-list li .input .avatar-img.small,
-ul.prompt-list li .output .avatar-img.small {
-} */
 
 @media screen and (max-width: 1000px) {
   section.top {
