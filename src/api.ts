@@ -1,4 +1,7 @@
 import jsonDB from "./assets/data.json" with { type: 'json' };
+
+// const {default: jsonData} = await import("./assets/data.json", { with: { type: 'json' } })
+
 import type { DB, Interaction, Org, Prompt, Service, User } from "./types";
 
 async function wait(milliseconds: number) {
@@ -12,6 +15,9 @@ type Opts = {
 
 export const LIMIT = 5;
 const db = jsonDB as DB;
+// const db = jsonData as DB;
+
+
 
 console.log(db)
 

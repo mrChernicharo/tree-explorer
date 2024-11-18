@@ -327,6 +327,7 @@ ul.prompt-list li .output .avatar-img.small {
 @media screen and (max-width: 1000px) {
   section.top {
     flex-direction: column;
+    overflow: hidden;
   }
   section.top .left {
     width: calc(100% - 100px);

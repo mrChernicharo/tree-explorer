@@ -157,7 +157,7 @@ function populateDetailsView() {
             <div>subject: ${subject}</div>
             <div>sentiment: ${sentiment}</div>
             <div>suggested title: ${suggestedTitle}</div>
-            <div>confidence: ${confidence}</div>
+            <div>confidence: ${(confidence! * 10).toFixed(2)}%</div>
             <br />
             <div>ip address: ${ip}</div>
             <div>latency: ${latency}ms</div>
