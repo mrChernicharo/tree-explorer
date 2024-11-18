@@ -9,6 +9,7 @@ export interface Org {
   id: string;
   name: string;
   imageUrl: string;
+  country: string;
   type: "org";
   parentId: "root";
 }
@@ -25,6 +26,7 @@ export interface User {
 export interface Company {
   id: string;
   name: string;
+  country: string;
   imageUrl: string;
   type: "company";
   parentId: "root";
@@ -60,6 +62,22 @@ export interface Interaction {
   type: "interaction";
   userId: string;
   serviceId: string;
+  suggestedTitle: string;
+  subject: string;
+  sentiment: string;
+  confidence: number;
+  ip: string;
+  latency: number;
+  w: number;
+  x: number;
+  y: number;
+  z: number;
+  white: number;
+  black: number;
+  green: number;
+  blue: number;
+  purple: number;
+  orange: number;
 }
 
 export type HierarchicalData<T> = T & {
@@ -82,8 +100,24 @@ export interface INodeData {
   description?: string;
   company?: string;
   release_date?: number;
+  country?: string;
   // interaction
-  prompts?: Prompt[];
+  suggestedTitle?: string;
+  subject?: string;
+  sentiment?: string;
+  confidence?: number;
+  ip?: string;
+  latency?: number;
+  w?: number;
+  x?: number;
+  y?: number;
+  z?: number;
+  white?: number;
+  black?: number;
+  green?: number;
+  blue?: number;
+  purple?: number;
+  orange?: number;
 }
 
 export interface INode {

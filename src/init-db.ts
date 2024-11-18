@@ -17,6 +17,7 @@ async function initDB() {
       id: `org-${i + 1}`,
       name: faker.company.name(),
       imageUrl: faker.image.urlPicsumPhotos({ width: 320, height: 180, blur: 0, grayscale: false }),
+      country: faker.location.country(),
       // imageUrl: faker.image.avatar(),
       // imageUrl: faker.image.url({ width: 128, height: 128 }),
       // imageUrl: faker.image.dataUri({ width: 128, height: 128 }),
@@ -50,6 +51,7 @@ async function initDB() {
       id: `company-${i + 1}`,
       name: companyNames[i],
       imageUrl: faker.image.urlLoremFlickr({ width: 128, height: 128 }),
+      country: faker.location.country(),
       type: "company",
       parentId: "root",
     });
@@ -112,6 +114,22 @@ async function initDB() {
         name: interactionDate.toLocaleString("en"),
         userId: user.id,
         serviceId,
+        suggestedTitle: faker.book.title(),
+        subject: faker.company.buzzPhrase(),
+        sentiment: faker.company.buzzAdjective(),
+        confidence: faker.number.float({min: 5, max: 10}),
+        ip: faker.internet.ipv6(),
+        latency: faker.number.int({min:0, max:4600}),
+        w: faker.number.int({min:0, max:4600}),
+        x: faker.number.int({min:0, max:4600}),
+        y: faker.number.int({min:0, max:4600}),
+        z: faker.number.int({min:0, max:4600}),
+        white: faker.number.int({min:0, max:4600}),
+        black: faker.number.int({min:0, max:4600}),
+        green: faker.number.int({min:0, max:4600}),
+        blue: faker.number.int({min:0, max:4600}),
+        purple: faker.number.int({min:0, max:4600}),
+        orange: faker.number.int({min:0, max:4600}),
       });
       interactionIdx++;
     }

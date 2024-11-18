@@ -23,3 +23,29 @@ export function groupArray<T>(array: T[], limit: number): T[][] {
 }
 
 export const dateIntl = new Intl.DateTimeFormat("en", { dateStyle: "medium", timeStyle: "medium" });
+
+export function parseEntryId(type: string, idStr: string) {
+  switch (type) {
+    case "org":
+      return idStr;
+    case "user":
+      return idStr;
+    case "service":
+      return idStr.split("::")[0];
+    case "interaction":
+      return idStr.split("::")[0];
+    default:
+      return idStr;
+  }
+}
+
+export function filterDuplicates<T extends { id: string }>(arr: T[]) {
+  const res: T[] = [];
+  const set = new Set();
+  arr.forEach((item) => {
+    if (set.has(item.id)) return;
+    set.add(item.id);
+    res.push(item);
+  });
+  return res;
+}
