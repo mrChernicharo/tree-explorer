@@ -1,7 +1,7 @@
 import { api, LIMIT } from "./api";
 import { TreeChart } from "./tree";
 import { INode, Prompt } from "./types";
-import { parseEntryId, filterDuplicates } from "./helperFns";
+import { parseEntryId, filterDuplicates, dateIntl } from "./helperFns";
 
 const icons: Record<string, string> = {
   org: "org.svg",
@@ -133,12 +133,13 @@ function populateDetailsView() {
               <h2>${name}</h2>
               <div>suggested title: ${suggestedTitle}</div>
               <div>subject: ${subject}</div>
-              <div><span>${prompts?.totalCount} prompts</span></div>
               <div>green: ${green}</div>
               <div>blue: ${blue}</div>
               <div>white: ${white}</div>
               <div>black: ${black}</div>
               <div>orange: ${orange}</div>
+
+              <div><h3>${prompts?.totalCount} prompts</h3></div>
             </div>
           </div>
           <ul class="prompt-list"> ${(prompts?.entries || [])
@@ -150,7 +151,7 @@ function populateDetailsView() {
                     ${i + 1} <img class="avatar-img small" src="${currNodeChain.user?.data.imageUrl}" />
                     <span>
                       ${currNodeChain.user?.data.name}
-                      <span class="timestamp">${prompt.timestamp.toLocaleString("en")}</span>
+                      <span class="timestamp">${dateIntl.format(new Date(prompt.timestamp))}</span>
                     </span>
                   </div>
                   <div class="bottom"><span>${prompt.input}</span></div>
@@ -176,7 +177,7 @@ function populateDetailsView() {
       if (remaining > 0) {
         const loadMoreBtn = document.createElement("button");
         loadMoreBtn.classList.add("load-more-btn");
-        loadMoreBtn.innerHTML = `Load more +${remaining}`;
+        loadMoreBtn.innerHTML = `Load more Prompts +${remaining}`;
         loadMoreBtn.onclick = () => {
           const offset = Math.floor(((prompts?.entries || []).length || 0) / LIMIT);
           api.fetchInteractionPrompts(interactionId, { offset }).then((prompts) => {

@@ -1,3 +1,11 @@
+export const dateIntl = new Intl.DateTimeFormat("en", {
+  day: "numeric",
+  month: "short",
+  hour: "2-digit",
+  minute: "2-digit",
+});
+// export const dateIntl = new Intl.DateTimeFormat("en", { dateStyle: "medium", timeStyle: "medium" });
+
 export function getRandomInt(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
@@ -21,8 +29,6 @@ export function groupArray<T>(array: T[], limit: number): T[][] {
 
   return result;
 }
-
-export const dateIntl = new Intl.DateTimeFormat("en", { dateStyle: "medium", timeStyle: "medium" });
 
 export function parseEntryId(type: string, idStr: string) {
   switch (type) {
