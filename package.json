@@ -5,11 +5,13 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "db": "node --watch --experimental-strip-types ./src/init-db.ts",
     "build": "tsc && vite build",
     "preview": "vite preview"
   },
   "devDependencies": {
     "@types/d3": "^7.4.3",
+    "@types/node": "^22.9.0",
     "typescript": "~5.6.2",
     "vite": "^5.4.10"
   },
@@ -17,5 +19,8 @@
     "@faker-js/faker": "^9.2.0",
     "@lottiefiles/dotlottie-web": "^0.36.1",
     "d3": "^7.9.0"
+  },
+  "volta": {
+    "node": "23.2.0"
   }
 }

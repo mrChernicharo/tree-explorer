@@ -24,7 +24,8 @@ class TreeChart<T> {
   nodeMargin = 10;
 
   dx = 26;
-  dy = window.innerWidth > 600 ? window.innerWidth / 6 : 150;
+
+  dy = window.innerWidth > 600 ? 250 : 180;
   deltaScroll = 0.8;
 
   initTree(hierarchicalData: HierarchicalData<T>, drawDepth = -1) {

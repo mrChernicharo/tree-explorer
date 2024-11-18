@@ -2,6 +2,14 @@ import { api } from "./api";
 import { TreeChart } from "./tree";
 import { INode, Prompt } from "./types";
 
+const icons: Record<string, string> = {
+  org: "org.svg",
+  user: "user.svg",
+  company: "company.svg",
+  service: "service.svg",
+  interaction: "interaction.svg",
+};
+
 const canvas = document.querySelector("#frame") as HTMLDivElement;
 const breadcrumbs = document.querySelector("#breadcrumbs") as HTMLDivElement;
 
@@ -23,6 +31,7 @@ const currNodeChain: Record<string, INode | null> = {
   service: null,
   interaction: null,
 };
+// const promts = new Map<string, Prompt>();
 
 /******/
 
@@ -68,105 +77,132 @@ function onTreeUpdate(event: Event) {
       break;
   }
 
+  updateBreadcrumbs();
+}
+
+function updateBreadcrumbs() {
   const nodeChain = [currNodeChain.org, currNodeChain.user, currNodeChain.service, currNodeChain.interaction].filter(
     Boolean
   ) as INode[];
 
-  console.log({ selectedNode, currNodeChain, nodeChain });
+  console.log("updateBreadcrumbs", { selectedNode, currNodeChain, nodeChain });
 
   breadcrumbs.innerHTML = "";
+  detailsViewContent.innerHTML = "";
   nodeChain.forEach((node, i) => {
-    const anchorEl = document.createElement("a");
-    anchorEl.dataset["id"] = node.data.id;
-    anchorEl.dataset["name"] = node.data.name;
-    anchorEl.dataset["type"] = node.data.type;
-    anchorEl.textContent = node.data.name;
-    anchorEl.href = "#";
-    anchorEl.onclick = () => {
+    const entityCard = document.createElement("div");
+    const img = node.data?.imageUrl ? `<img class="avatar-img small" src="${node.data.imageUrl}" />` : "";
+    const text = `<small><img src="${icons[node.data.type]}" class="icon" /> ${node.data.name}</small>`;
+    entityCard.innerHTML = `${img} ${text}`;
+    entityCard.classList.add("entity-card");
+    entityCard.dataset["type"] = node.data.type;
+    if (node.data.id === selectedNode?.data.id) {
+      entityCard.classList.add("active");
+    } else {
+      entityCard.classList.remove("active");
+    }
+    entityCard.onclick = () => {
       openDetailsView(node.data.type);
     };
-    if (i > 0) breadcrumbs.append(" > ");
-    breadcrumbs.appendChild(anchorEl);
+    breadcrumbs.appendChild(entityCard);
   });
+}
+
+function populateDetailsView() {
+  switch (details.dataset.type) {
+    case "interaction": {
+      const { name, type } = currNodeChain.interaction!.data;
+      return (detailsViewContent.innerHTML = `
+        <div>  
+          <div class="head">
+            <h2><img class="icon" src="${icons[type]}" /> ${name}</h2>
+          </div>
+          <ul class="prompt-list"> ${(currNodeChain.interaction!.data.prompts || [])
+            .map(
+              (prompt: Prompt) => `
+              <li>
+                <div class="input">
+                  <div class="top">
+                    <img class="avatar-img small" src="${currNodeChain.user?.data.imageUrl}" />
+                    <span>
+                      ${currNodeChain.user?.data.name}
+                      <span class="timestamp">${prompt.timestamp.toLocaleString("en")}</span>
+                    </span>
+                  </div>
+                  <div class="bottom"><span>${prompt.input}</span></div>
+                </div>
+                <div class="output">
+                  <div class="top">
+                    <img class="avatar-img small" src="${currNodeChain.service?.data.imageUrl}" />
+                    <span>
+                      ${currNodeChain.service?.data.name}
+                    </span>
+                  </div>
+                  <div class="bottom"><span>${prompt.output}</span></div>
+                </div>
+              </li>
+            `
+            )
+            .join(" ")} 
+          </ul>
+        <div>  
+        `);
+    }
+    case "service": {
+      const { name, imageUrl, type, company, description, release_date } = currNodeChain.service!.data;
+      return (detailsViewContent.innerHTML = `
+        <div>
+          <div class="head">
+            <img class="avatar-img" src="${imageUrl}" />
+            <h2><img class="icon" src="${icons[type]}" /> ${name}</h2>
+          </div>
+
+          <div class="body">
+            <div>${company}</div>
+            <div>${release_date}</div>
+            <div>${description}</div>
+          </div>
+        </div>
+        `);
+    }
+    case "user": {
+      const { name, imageUrl, type, position, zodiacSign, favoriteFood } = currNodeChain.user!.data;
+      return (detailsViewContent.innerHTML = `
+        <div>
+          <div class="head">
+            <img class="avatar-img" src="${imageUrl}" />
+            <h2><img class="icon" src="${icons[type]}" /> ${name}</h2>
+          </div>
+
+          <div class="body">
+            <div>${position}</div>
+            <div>${favoriteFood}</div>
+            <div>${zodiacSign}</div>
+          </div>
+        </div>
+        `);
+    }
+    case "org":
+    default: {
+      const { name, imageUrl, type } = currNodeChain.org!.data;
+      return (detailsViewContent.innerHTML = `
+        <div>
+          <div class="head">
+            <img class="avatar-img" src="${imageUrl}" />
+            <h2><img class="icon" src="${icons[type]}" /> ${name}</h2>
+          </div>
+        </div>
+        `);
+    }
+  }
 }
 
 function openDetailsView(linkType: string) {
   canvas.style.display = "none";
   details.style.display = "block";
+  details.dataset.type = linkType;
 
-  if (currNodeChain.org) {
-    orgDetails.innerHTML = `
-    <div class="entity-details ${currNodeChain.org.data.type}">
-      <img class="avatar-img" src="${currNodeChain.org.data.imageUrl}" />
-      <h3><img src="org.svg" class="h3-icon" /> ${currNodeChain.org.data.name}</h3>
-    </div>
-    `;
-    detailsViewContent.innerHTML = `${currNodeChain.org.data.name}`;
-  } else {
-    orgDetails.innerHTML = "";
-  }
-
-  if (currNodeChain.user && linkType !== "org") {
-    userDetails.innerHTML = `
-    <div class="entity-details ${currNodeChain.user.data.type}">
-      <img class="avatar-img" src="${currNodeChain.user.data.imageUrl}" />
-      <h3><img src="user.svg" class="h3-icon" />${currNodeChain.user.data.name}</h3>
-    </div>
-    `;
-    detailsViewContent.innerHTML = `${currNodeChain.user.data.name}`;
-  } else {
-    userDetails.innerHTML = "";
-  }
-
-  if (currNodeChain.service && !["org", "user"].includes(linkType)) {
-    serviceDetails.innerHTML = `
-    <div class="entity-details ${currNodeChain.service.data.type}">
-      <img class="avatar-img" src="${currNodeChain.service.data.imageUrl}" />
-      <h3><img src="service.svg" class="h3-icon" />${currNodeChain.service.data.name}</h3>
-    </div>
-    `;
-    detailsViewContent.innerHTML = `${currNodeChain.service.data.name}`;
-  } else {
-    serviceDetails.innerHTML = "";
-  }
-
-  if (currNodeChain.interaction && !["org", "user", "service"].includes(linkType)) {
-    interactionDetails.innerHTML = `
-      <div class="entity-details ${currNodeChain.interaction.data.type}">
-        <h3><img src="interaction.svg" class="h3-icon" />${currNodeChain.interaction.data.name}</h3>
-      </div>
-    `;
-
-    detailsViewContent.innerHTML = `<ul class="prompt-list"> ${(currNodeChain.interaction.data.prompts || [])
-      .map(
-        (prompt: Prompt) => `
-          <li>  
-            <div class="input">
-              <div class="top">
-                <img class="avatar-img small" src="${currNodeChain.user?.data.imageUrl}" />
-                <span>
-                  ${currNodeChain.user?.data.name}
-                  <span class="timestamp">${prompt.timestamp.toLocaleString("en")}</span> 
-                </span>
-              </div>
-              <div class="bottom"><span>${prompt.input}</span></div>
-            </div>
-            <div class="output">
-              <div class="top">
-                <img class="avatar-img small" src="${currNodeChain.service?.data.imageUrl}" />
-                <span>
-                  ${currNodeChain.service?.data.name} 
-                </span>
-              </div>
-              <div class="bottom"><span>${prompt.output}</span></div>
-            </div>
-          </li>  
-        `
-      )
-      .join(" ")} </ul>`;
-  } else {
-    interactionDetails.innerHTML = "";
-  }
+  populateDetailsView();
 }
 
 function openMainView() {
@@ -189,8 +225,7 @@ function parseEntryId(type: string, idStr: string) {
   }
 }
 
-const { svg } = await initializeTree();
-canvas.appendChild(svg);
-
 window.addEventListener("tree-updated", onTreeUpdate);
 detailsBackArrow.onclick = openMainView;
+const { svg } = await initializeTree();
+canvas.appendChild(svg);
