@@ -29,11 +29,17 @@ async function initDB() {
   const userCount = orgCount * 24;
   for (let i = 0; i < userCount; i++) {
     const parentId = `org-${getRandomInt(1, db.orgs.length)}`;
+    const firstName = faker.person.firstName()
+    const lastName = faker.person.lastName();
+    const email = faker.internet.email({ firstName, lastName })
+    const dateOfBirth = faker.date.birthdate()
     db.users.push({
       id: `user-${i + 1}`,
-      name: `${faker.person.firstName()} ${faker.person.lastName()}`,
-      position: faker.person.jobTitle(),
+      name: `${firstName} ${lastName}`,
       imageUrl: faker.image.avatar(),
+      position: faker.person.jobTitle(),
+      email,
+      dateOfBirth,
       favoriteFood: faker.food.dish(),
       zodiacSign: faker.person.zodiacSign(),
       type: "user",

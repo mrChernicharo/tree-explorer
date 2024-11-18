@@ -1,7 +1,7 @@
 import { api, LIMIT } from "./api";
 import { TreeChart } from "./tree";
 import { Company, INode, Prompt, Service } from "./types";
-import { parseEntryId, filterDuplicates, dateIntl } from "./helperFns";
+import { parseEntryId, filterDuplicates, dateIntl, dobIntl } from "./helperFns";
 
 const icons: Record<string, string> = {
   org: "org.svg",
@@ -119,8 +119,27 @@ function updateBreadcrumbs() {
 function populateDetailsView() {
   switch (details.dataset.type) {
     case "interaction": {
-      const { id, name, type, suggestedTitle, subject, green, black, blue, white, orange } =
-        currNodeChain.interaction!.data;
+      const {
+        id,
+        name,
+        type,
+        suggestedTitle,
+        confidence,
+        sentiment,
+        subject,
+        ip,
+        latency,
+        green,
+        black,
+        blue,
+        white,
+        orange,
+        purple,
+        x,
+        y,
+        z,
+        w,
+      } = currNodeChain.interaction!.data;
       const interactionId = parseEntryId("interaction", id);
       const prompts = promtsCache.get(interactionId);
 
@@ -131,21 +150,39 @@ function populateDetailsView() {
             <img class="icon" src="${icons[type]}" /> 
             <div>
               <h2>${name}</h2>
-              <div>${id}</div>
+              <div style="text-align: center; margin-top: 10px">${interactionId}</div>
             </div>
           </div>
           <div class="body">
-              <div>suggested title: ${suggestedTitle}</div>
-              <div>subject: ${subject}</div>
-              <div>green: ${green}</div>
-              <div>blue: ${blue}</div>
-              <div>white: ${white}</div>
-              <div>black: ${black}</div>
-              <div>orange: ${orange}</div>
-              <br />
-              <div><h3>${prompts?.totalCount} prompts</h3></div>
-              <br />
+            <div>subject: ${subject}</div>
+            <div>sentiment: ${sentiment}</div>
+            <div>suggested title: ${suggestedTitle}</div>
+            <div>confidence: ${confidence}</div>
+            <br />
+            <div>ip address: ${ip}</div>
+            <div>latency: ${latency}ms</div>
+            <br />
+            <div class="interaction-char-data">
+              <div>x: ${x}</div>
+              <div>y: ${y}</div>
+              <div>z: ${z}</div>
+              <div>w: ${w}</div>
+            </div>
+            <br />
+            <div class="interaction-color-data">
+              <div>${createSvgCircle("#00ddb3")} ${green}</div>
+              <div>${createSvgCircle("#232bff")} ${blue}</div>
+              <div>${createSvgCircle("#f3f6f8")} ${white}</div>
+              <div>${createSvgCircle("#000")} ${black}</div>
+              <div>${createSvgCircle("#772dff")} ${purple}</div>
+              <div>${createSvgCircle("#ff9900")} ${orange}</div>
+            </div>
           </div>
+          
+          <div style="text-align: center; padding: 16px 0 36px">
+            <h3>${prompts?.totalCount} prompts</h3>
+          </div>
+          
           <ul class="prompt-list"> ${(prompts?.entries || [])
             .map(
               (prompt: Prompt, i) => `
@@ -181,19 +218,28 @@ function populateDetailsView() {
       if (remaining > 0) {
         const loadMoreBtn = document.createElement("button");
         loadMoreBtn.classList.add("load-more-btn");
-        loadMoreBtn.innerHTML = `Load more Prompts +${remaining}`;
+        loadMoreBtn.innerHTML = `
+          <span>Load more Prompts +${remaining}</span>
+          <img src="spinner.svg" width="24" height="24" />
+          `;
         loadMoreBtn.onclick = () => {
+          loadMoreBtn.classList.add("loading");
           const offset = Math.floor(((prompts?.entries || []).length || 0) / LIMIT);
-          api.fetchInteractionPrompts(interactionId, { offset }).then((prompts) => {
-            if (!promtsCache.get(interactionId)) {
-              promtsCache.set(interactionId, { entries: [], totalCount: 0 });
-            }
-            const prev = promtsCache.get(interactionId)!;
-            const entries = filterDuplicates([...prev.entries, ...prompts.entries]);
-            console.log({ offset, entries, prev });
-            promtsCache.set(interactionId, { entries, totalCount: prompts.totalCount });
-            populateDetailsView();
-          });
+          api
+            .fetchInteractionPrompts(interactionId, { offset })
+            .then((prompts) => {
+              if (!promtsCache.get(interactionId)) {
+                promtsCache.set(interactionId, { entries: [], totalCount: 0 });
+              }
+              const prev = promtsCache.get(interactionId)!;
+              const entries = filterDuplicates([...prev.entries, ...prompts.entries]);
+              console.log({ offset, entries, prev });
+              promtsCache.set(interactionId, { entries, totalCount: prompts.totalCount });
+              populateDetailsView();
+            })
+            .finally(() => {
+              loadMoreBtn.classList.remove("loading");
+            });
         };
         detailsViewContent.append(loadMoreBtn);
       }
@@ -216,7 +262,8 @@ function populateDetailsView() {
           </div>
 
           <div class="body">
-            <div>description: ${description}</div>
+            <div>${description}</div>
+            <br />
             <div>category: ${category}</div>
             <div>release date: ${release_date}</div>
             <br />
@@ -227,7 +274,9 @@ function populateDetailsView() {
         `);
     }
     case "user": {
-      const { id, name, imageUrl, type, position, zodiacSign, favoriteFood } = currNodeChain.user!.data;
+      const { id, name, imageUrl, type, email, dateOfBirth, position, zodiacSign, favoriteFood } =
+        currNodeChain.user!.data;
+      const dob = new Date(dateOfBirth!);
       return (detailsViewContent.innerHTML = `
         <div>
           <div class="head">
@@ -239,6 +288,11 @@ function populateDetailsView() {
           </div>
 
           <div class="body">
+            <div><a href="mailto:${email}" target="_blank">${email}</a></div>
+            <br />
+            <div>birthdate: ${dobIntl.format(dob)}</div>
+            <div>age: ${Math.floor((Date.now() - dob!.getTime()) / (365 * 24 * 60 * 60 * 1000))} years</div>
+            <br />
             <div>favorite food: ${favoriteFood}</div>
             <div>zodiac sign: ${zodiacSign}</div>
           </div>
@@ -276,6 +330,14 @@ function openDetailsView(linkType: string) {
 function openMainView() {
   details.style.display = "none";
   canvas.style.display = "block";
+}
+
+function createSvgCircle(color: string) {
+  return `
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" style="background-color: transparent">
+      <circle cx="8" cy="8" r="8" fill="${color}" stroke="#787089" stroke-width="0.2"/>
+    </svg>
+  `;
 }
 
 window.addEventListener("tree-updated", onTreeUpdate);

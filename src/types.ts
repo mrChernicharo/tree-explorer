@@ -7,29 +7,31 @@ export interface DataEntry {
 
 export interface Org {
   id: string;
+  type: "org";
+  parentId: "root";
   name: string;
   imageUrl: string;
   country: string;
-  type: "org";
-  parentId: "root";
 }
 export interface User {
   id: string;
+  type: "user";
+  parentId: string;
   name: string;
   imageUrl: string;
+  email: string;
+  dateOfBirth: Date;
   position: string;
   favoriteFood: string;
   zodiacSign: string;
-  type: "user";
-  parentId: string;
 }
 export interface Company {
   id: string;
+  type: "company";
+  parentId: "root";
   name: string;
   country: string;
   imageUrl: string;
-  type: "company";
-  parentId: "root";
 }
 
 export interface ServiceJSON {
@@ -95,6 +97,8 @@ export interface INodeData {
   position?: string;
   favoriteFood?: string;
   zodiacSign?: string;
+  email?: string;
+  dateOfBirth?: Date;
   // service
   category?: string;
   description?: string;

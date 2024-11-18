@@ -2,8 +2,8 @@
   --dark: #20272c;
   --light: #f3f6f8;
   --light-2: #d9e0e6;
-  --muted-front: hsl(258, 10%, 49%);
-  --muted-bg: hsl(260, 58%, 86%);
+  --muted-front: #787089;
+  --muted-bg: #d4c7f0;
   --accent-color: #00ddb3;
   --accent-color-2: #0b9d85;
   --primary: #232bff;
@@ -184,8 +184,8 @@ svg {
 }
 
 .avatar-img {
-  width: 48px;
-  height: 48px;
+  width: 64px;
+  height: 64px;
   object-fit: cover;
   border-radius: 1000px;
 }
@@ -245,16 +245,33 @@ svg {
 }
 
 #details-view-content .body {
-  /* border: 1px solid purple; */
+  /* border: 2px solid var(--light-2); */
+  background-color: var(--light-2);
+  border-radius: 16px;
+  padding-block: 36px;
   max-width: 600px;
-  margin: 0 auto;
+  margin: 0 auto 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#details-view-content .body .interaction-char-data,
+#details-view-content .body .interaction-color-data {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+}
+.interaction-color-data div {
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 #details-view-content ul.prompt-list {
   margin: 0 auto;
-  /* padding-block: ; */
   max-width: 600px;
-  padding-bottom: 64px;
+  padding-bottom: 36px;
 }
 
 #details-view-content ul.prompt-list li {
@@ -288,9 +305,19 @@ svg {
   border: none;
   cursor: pointer;
   line-height: 64px;
+  font-size: 16px;
+  font-weight: bold;
 }
 .load-more-btn:hover {
   background-color: var(--light-2);
+}
+.load-more-btn img {
+  transform: translate(6px, 6px);
+  opacity: 0;
+}
+
+.load-more-btn.loading img {
+  opacity: 1;
 }
 
 /* ul.prompt-list li .input .avatar-img.small,

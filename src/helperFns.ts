@@ -4,6 +4,10 @@ export const dateIntl = new Intl.DateTimeFormat("en", {
   hour: "2-digit",
   minute: "2-digit",
 });
+
+export const dobIntl = new Intl.DateTimeFormat("en", {
+  dateStyle: "long",
+});
 // export const dateIntl = new Intl.DateTimeFormat("en", { dateStyle: "medium", timeStyle: "medium" });
 
 export function getRandomInt(min: number, max: number) {
