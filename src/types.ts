@@ -47,6 +47,8 @@ export interface Service extends Omit<ServiceJSON, "id"> {
 }
 
 export interface Prompt {
+  id: string;
+  interactionId: string;
   input: string;
   output: string;
   timestamp: Date;
@@ -58,7 +60,6 @@ export interface Interaction {
   type: "interaction";
   userId: string;
   serviceId: string;
-  prompts: Prompt[];
 }
 
 export type HierarchicalData<T> = T & {
@@ -110,4 +111,5 @@ export interface DB {
   companies: Company[];
   services: Service[];
   interactions: Interaction[];
+  prompts: Prompt[];
 }

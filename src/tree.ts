@@ -152,6 +152,19 @@ class TreeChart<T> {
 
     nodeEnter
       .append("image")
+      .attr("class", "expand-icon")
+      .attr("xlink:href", "chevron-enter.svg")
+      .attr("height", 24)
+      .attr("width", 32)
+      .attr("x", (d: INode) => this.#getNodeWidth(d) - 16)
+      .attr("y", -13)
+      .style("display", "none")
+      .on("click", () => {
+        window.dispatchEvent(new CustomEvent("open-details-view"));
+      });
+
+    nodeEnter
+      .append("image")
       .attr("class", "plus-icon")
       .attr("xlink:href", "plus.svg")
       .attr("height", 10)
@@ -198,9 +211,13 @@ class TreeChart<T> {
         return !this.isLoading && d.id === this.selected?.id && remainingChildren > 0 ? "block" : "none";
       });
 
+    nodeUpdate.select("image.expand-icon").style("display", (d: INode) => {
+      return !this.isLoading && d.id === this.selected?.id && d.depth > 3 ? "block" : "none";
+    });
+
     nodeUpdate.select(".plus-icon").style("display", (d: INode) => {
       const remainingChildren = this.#getRemainingChildCount(d);
-      return !this.isLoading && d.id === this.selected?.id && remainingChildren > 0 ? "block" : "none";
+      return !this.isLoading && d.id === this.selected?.id && remainingChildren > 0 && d.depth < 4 ? "block" : "none";
     });
 
     // Transition exiting nodes to the parent's new position.
@@ -295,7 +312,9 @@ class TreeChart<T> {
     }
 
     if (clickedPlus) {
-      await this.#handleFetchNodeData(d);
+      if (d.data.type !== "interaction") {
+        await this.#handleFetchNodeData(d);
+      }
       return this.update(null, d);
     }
 
@@ -311,7 +330,7 @@ class TreeChart<T> {
 
         // clicking node for the first time
         if ([undefined, 0].includes(d.data?.children?.length)) {
-          if (d.data.count > 0) {
+          if (d.data.count > 0 && d.data.type !== "interaction") {
             await this.#handleFetchNodeData(d); // fetch if node has children
           }
         } else if (d.data.children.length > 0) {

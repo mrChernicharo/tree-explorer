@@ -10,7 +10,7 @@ console.log("hello db init");
 
 
 async function initDB() {
-  const db: DB = { orgs: [], users: [], companies: [], services: [], interactions: [] };
+  const db: DB = { orgs: [], users: [], companies: [], services: [], interactions: [], prompts: [] };
   const orgCount = 5;
   for (let i = 0; i < orgCount; i++) {
     db.orgs.push({
@@ -67,6 +67,7 @@ async function initDB() {
   }
 
   let interactionIdx = 1;
+  let promptIdx = 1;
   for (const user of db.users) {
     const serviceCount = getRandomInt(0, 12);
     const userServiceIdsSet = new Set<string>();
@@ -83,34 +84,37 @@ async function initDB() {
     const interactions: Interaction[] = [];
     while (interactions.length < interactionCount) {
       const serviceId = userServiceIds[getRandomInt(0, userServiceIds.length - 1)];
+      const interactionId = `interaction-${interactionIdx}`
       const interactionDate = faker.date.between({
         from: new Date().getTime() - 180 * 24 * 60 * 60 * 1000,
         to: new Date(),
       });
+
       const prompts: Prompt[] = [];
-      const promptCount = getRandomInt(1, 6);
+      const promptCount = getRandomInt(1, 24);
       let interval = getRandomInt(6000, 60_000);
       for (let i = 0; i < promptCount; i++) {
-        const prompt = {
+        prompts.push({
+          id: `prompt-${promptIdx}`,
+          interactionId,
           input: faker.lorem.lines({ min: 1, max: 2 }),
           output: faker.lorem.lines({ min: 2, max: 6 }),
           timestamp: new Date(interactionDate.getTime() + interval),
-        };
+        });
         interval += getRandomInt(6000, 60_000);
-        prompts.push(prompt);
+        promptIdx++
       }
+      db.prompts.push(...prompts)
 
       interactions.push({
-        id: `interaction-${interactionIdx}`,
+        id: interactionId,
         type: "interaction",
         name: interactionDate.toLocaleString("en"),
         userId: user.id,
         serviceId,
-        prompts,
       });
       interactionIdx++;
     }
-
     db.interactions.push(...interactions);
   }
   

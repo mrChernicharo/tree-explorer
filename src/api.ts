@@ -1,5 +1,5 @@
 import jsonDB from "./assets/data.json" with { type: 'json' };
-import type { DB, Interaction, Org, Service, User } from "./types";
+import type { DB, Interaction, Org, Prompt, Service, User } from "./types";
 
 async function wait(milliseconds: number) {
   return new Promise((resolve) => setTimeout(resolve, milliseconds));
@@ -10,7 +10,7 @@ type Opts = {
   offset?: number;
 };
 
-const LIMIT = 5;
+export const LIMIT = 5;
 const db = jsonDB as DB;
 
 console.log(db)
@@ -72,7 +72,7 @@ class Api {
     const { limit = LIMIT, offset = 0 } = options;
     const userServiceInteractions = [...db.interactions]
       .filter((int) => int.userId === userId && int.serviceId === serviceId)
-      .sort((a, b) => new Date(b.prompts[0].timestamp).getTime() - new Date(a.prompts[0].timestamp).getTime());
+      .sort((a, b) => new Date(b.name).getTime() - new Date(a.name).getTime());
 
     const entries: Interaction[] = [];
     for (let i = 0; i < limit; i++) {
@@ -85,6 +85,24 @@ class Api {
     // console.log("::: fetchUserServiceInteractions", { userId, serviceId, userServiceInteractions, entries });
     await wait(200);
     return { entries, totalCount: userServiceInteractions.length };
+  }
+  async fetchInteractionPrompts(interactionId: string, options: Opts) {
+    const { limit = LIMIT, offset = 0 } = options;
+    const prompts = [...db.prompts]
+      .filter((prmpt) => prmpt.interactionId === interactionId)
+      .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+
+    const entries: Prompt[] = [];
+    for (let i = 0; i < limit; i++) {
+      const idx = limit * offset + i;
+      const prompt = prompts[idx];
+      if (prompt) {
+        entries.push(prompt);
+      }
+    }
+    console.log("::: fetchInteractionPrompts", { interactionId, prompts, db, entries });
+    await wait(200);
+    return { entries, totalCount: prompts.length };
   }
   //
   // async fetchCompanies
@@ -163,11 +181,13 @@ class Api {
       });
       this.interactionOffsets[serviceId][userId]++;
 
+
+      // await this.fetchInteractionPrompts(int)
       const interactionNodes = interactions.map((interaction) => ({
         data: {
           ...interaction,
           id: `${interaction.id}::${serviceId}::${userId}`,
-          count: 0,
+          count: db.prompts.filter(p => p.interactionId === interaction.id).length ,
         },
       }));
       return interactionNodes;
