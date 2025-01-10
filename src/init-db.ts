@@ -19,14 +19,14 @@ const companyImgUrls = [
 
 
 const orgCount = companies.length;
-const usersPerOrg = 24;
-const maxServicesPerUser = 12;
+const usersPerOrg = 20;
+const maxServicesPerUser = 10;
 
 const minInteractionCount = 2;
-const maxInteractionCount = 36;
+const maxInteractionCount = 20;
 
 const minPromptCount = 1;
-const maxPromptCount = 40;
+const maxPromptCount = 30;
 
 async function initDB() {
   const db: DB = { orgs: [], users: [], companies: [], services: [], interactions: [], prompts: [] };
