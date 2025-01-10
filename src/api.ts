@@ -15,11 +15,9 @@ type Opts = {
 
 export const LIMIT = 5;
 const db = jsonDB as DB;
-// const db = jsonData as DB;
 
 
 
-console.log(db)
 
 class Api {
   orgOffset = 0;

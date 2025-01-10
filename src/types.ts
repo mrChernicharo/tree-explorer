@@ -20,7 +20,7 @@ export interface User {
   name: string;
   imageUrl: string;
   email: string;
-  dateOfBirth: Date;
+  dateOfBirth: Date | string;
   position: string;
   favoriteFood: string;
   zodiacSign: string;
@@ -55,7 +55,7 @@ export interface Prompt {
   interactionId: string;
   input: string;
   output: string;
-  timestamp: Date;
+  timestamp: Date | string;
 }
 
 export interface Interaction {
