@@ -18,6 +18,11 @@ const details = document.querySelector("#details-view") as HTMLDivElement;
 const detailsBackArrow = document.querySelector("#details-view .dismiss-btn") as HTMLDivElement;
 const detailsViewContent = document.querySelector("#details-view #details-view-content") as HTMLDivElement;
 
+const mainView = document.querySelector("#main-view") as HTMLDivElement;
+const appView = document.querySelector("#app-view") as HTMLDivElement;
+const appLink = document.querySelector(".app-link") as HTMLAnchorElement;
+const backLink = document.querySelector(".back-link") as HTMLAnchorElement;
+
 let selectedNode: INode | null = null;
 
 const currNodeChain: Record<string, INode | null> = { org: null, user: null, service: null, interaction: null };
@@ -350,10 +355,22 @@ function openMainView() {
   canvas.style.display = "block";
 }
 
+function goToApp() {
+  mainView.classList.add("hidden");
+  appView.classList.remove("hidden");
+}
+
+function goBackToIntro() {
+  mainView.classList.remove("hidden");
+  appView.classList.add("hidden");
+}
+
 async function main() {
   window.addEventListener("tree-updated", onTreeUpdated);
   window.addEventListener("open-details-view", () => openDetailsView("interaction"));
   detailsBackArrow.addEventListener("click", openMainView);
+  appLink.addEventListener("click", goToApp);
+  backLink.addEventListener("click", goBackToIntro);
 
   const { svg } = await initializeTree();
   canvas.appendChild(svg);

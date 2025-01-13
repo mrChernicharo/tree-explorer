@@ -167,6 +167,10 @@ body.app.loading {
   font-weight: bold;
 }
 
+.hidden {
+  display: none;
+}
+
 /**********************************************************************/
 
 svg {

@@ -9,42 +9,65 @@
     <link rel="stylesheet" href="/src/style.css" />
   </head>
   <body>
-    <header>
-      <img src="/bird-logo.png" width="64" height="64" alt="" />
-      <span>Melodev</span>
-    </header>
+    <div id="main-view">
+      <header>
+        <img src="/bird-logo.png" width="64" height="64" alt="" />
+        <span>Melodev</span>
+      </header>
 
-    <section class="top">
-      <div class="left">
-        <h1>Understand how AI is being used by people across organizations</h1>
+      <section class="top">
+        <div class="left">
+          <h1>Understand how AI is being used by people across organizations</h1>
 
-        <p>
-          Gain complete visibility into how your organization is using AI tools with our super intuitive
-          <span>Activity Analyzer</span>. Track user interactions, analyze historical data, and customize dashboards to
-          suit your needs.
-        </p>
+          <p>
+            Gain complete visibility into how your organization is using AI tools with our super intuitive
+            <span>Activity Analyzer</span>. Track user interactions, analyze historical data, and customize dashboards
+            to suit your needs.
+          </p>
+        </div>
+
+        <div class="right">
+          <script
+            src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs"
+            type="module"
+          ></script>
+
+          <dotlottie-player
+            src="https://lottie.host/8e7c9f31-220b-4449-9265-57dbca2fd44b/PDa9A0rsMV.json"
+            background="transparent"
+            speed="1"
+            loop
+            autoplay
+          ></dotlottie-player>
+        </div>
+      </section>
+
+      <section class="bottom">
+        <a href="#" class="app-link">
+          <button class="cta-button"><span>Get Started</span></button>
+        </a>
+      </section>
+    </div>
+
+    <div id="app-view" class="app loading hidden">
+      <header style="border-bottom: 1px solid #cdcdcd">
+        <a href="#" class="back-link"><img src="/bird-logo.png" width="64" height="64" alt="" /></a>
+        <span>Data Explorer</span>
+      </header>
+
+      <div id="breadcrumbs"></div>
+
+      <div id="details-view">
+        <button class="dismiss-btn">
+          <img src="close.svg" alt="" />
+        </button>
+
+        <div id="details-view-content"></div>
       </div>
 
-      <div class="right">
-        <script
-          src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs"
-          type="module"
-        ></script>
+      <div id="frame"></div>
+    </div>
 
-        <dotlottie-player
-          src="https://lottie.host/8e7c9f31-220b-4449-9265-57dbca2fd44b/PDa9A0rsMV.json"
-          background="transparent"
-          speed="1"
-          loop
-          autoplay
-        ></dotlottie-player>
-      </div>
-    </section>
-
-    <section class="bottom">
-      <a href="app.html">
-        <button class="cta-button"><span>Get Started</span></button>
-      </a>
-    </section>
+    <script src="src/main.ts" type="module"></script>
   </body>
 </html>
